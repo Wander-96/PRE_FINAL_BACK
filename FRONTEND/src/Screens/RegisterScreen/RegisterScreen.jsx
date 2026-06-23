@@ -23,8 +23,7 @@ export const RegisterScreen = () => {
             // Llamamos al servicio de registro
             await register(email, password, username);
             
-            // Si el registro fue exitoso, no iniciamos sesión automáticamente (por seguridad)
-            // Avisamos y redirigimos al Login
+            // Si el registro fue exitoso
             setSuccessMessage('Account created successfully! Redirecting to login...');
             
             setTimeout(() => {
@@ -66,7 +65,7 @@ export const RegisterScreen = () => {
                     <form onSubmit={handleSubmit} className="login-form">
                         
                         {error && <div className="error-message">{error}</div>}
-                        {successMessage && <div className="success-message" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10B981', padding: '0.75rem', borderRadius: '8px', fontSize: '0.875rem' }}>{successMessage}</div>}
+                        {successMessage && <div className="success-message">{successMessage}</div>}
 
                         <div className="input-group">
                             <input 

@@ -4,7 +4,7 @@ import { getIo } from '../config/socket.config.js'
 
 class CommentService {
     async createComment(commentData, userId) {
-        // Validamos que el post exista antes de comentarlo
+        // Validación de existencia del post
         const post = await postRepository.getById(commentData.fk_id_post)
         if (!post || post.status === 'DELETED') {
             throw new Error('El post no existe o fue eliminado')
@@ -13,11 +13,11 @@ class CommentService {
         commentData.fk_id_user = userId
         const newComment = await commentRepository.create(commentData)
 
-        // Actualizamos el caché del post
+        // Actualización de caché de contador
         post.commentsCount += 1
         await post.save()
 
-        // 🔥 EMISIÓN DE EVENTO WEBSOCKET: Alerta en Tiempo Real
+        // Emisión de Notificación WebSocket
         const io = getIo();
         if (io && post.fk_id_user.toString() !== userId.toString()) {
             io.to(post.fk_id_user.toString()).emit('new_notification', {
@@ -39,12 +39,12 @@ class CommentService {
         const comment = await commentRepository.getById(commentId)
         if (!comment) throw new Error('Comentario no encontrado')
 
-        // Validación 1: Autoría
+        // Validación de Autoría
         if (comment.fk_id_user.toString() !== userId.toString()) {
             throw new Error('No tienes permisos para editar este comentario')
         }
 
-        // Validación 2: Ventana de 15 minutos
+        // Validación de ventana de edición (15 min)
         const timeElapsed = Date.now() - new Date(comment.createdAt).getTime()
         if (timeElapsed > 900000) {
             throw new Error('El tiempo límite para editar este comentario ha expirado (15 minutos)')
@@ -63,10 +63,10 @@ class CommentService {
         }
 
         const post = await postRepository.getById(comment.fk_id_post)
-        
+
         const deletedComment = await commentRepository.softDelete(commentId)
 
-        // Restamos 1 al caché del post
+        // Decremento de caché de contador
         if (post && post.commentsCount > 0) {
             post.commentsCount -= 1
             await post.save()

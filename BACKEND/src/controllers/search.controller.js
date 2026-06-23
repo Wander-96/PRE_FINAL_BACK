@@ -9,20 +9,20 @@ class SearchController {
             const limit = parseInt(req.query.limit) || 10;
             const page = parseInt(req.query.page) || 1;
 
-            // Evitamos búsquedas de 1 sola letra que saturen la DB
+            // Validación de longitud mínima
             if (query.length === 1) {
                 return res.status(400).json({ ok: false, message: 'La búsqueda debe tener al menos 2 caracteres' });
             }
 
             let results = {};
 
-            // Si piden 'all' o 'users', disparamos la búsqueda en usuarios
+            // Búsqueda de usuarios
             if (type === 'all' || type === 'users') {
                 const users = await userRepository.search(query, limit, page);
                 results.users = users;
             }
 
-            // Si piden 'all' o 'projects', disparamos la búsqueda en proyectos
+            // Búsqueda de proyectos
             if (type === 'all' || type === 'projects') {
                 const projects = await projectRepository.search(query, limit, page);
                 results.projects = projects;

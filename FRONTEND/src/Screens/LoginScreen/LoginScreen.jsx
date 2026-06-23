@@ -20,7 +20,7 @@ export const LoginScreen = () => {
         setIsLoading(true);
 
         try {
-            // Llamamos al servicio (que apunta a nuestro Backend en el puerto 3000)
+            // Llamamos al servicio (que apunta a nuestro Backend)
             const response = await login(email, password);
             
             // Si funciona, guardamos el token y la info en el Context (cerebro)

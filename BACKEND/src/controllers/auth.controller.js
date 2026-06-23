@@ -1,22 +1,19 @@
 import ENVIRONMENT from "../config/environment.config.js";
 import mailer_transport from "../config/mailer.config.js";
-import ServerError from "../helpers/serverError.helper.js"; // Nuestro helper personalizado
-import userRepository from "../repositories/user.repository.js"; // El operario de BD
-import bcrypt from 'bcrypt' // Para encriptar contraseñas
-import jwt from 'jsonwebtoken' // Para crear tokens de sesión (las "llaves" del usuario)
+import ServerError from "../helpers/serverError.helper.js";
+import userRepository from "../repositories/user.repository.js";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class AuthController {
 
-    /* ====================================================================
-       1. REGISTRO DE USUARIO
-       ==================================================================== */
+    // Registro de Usuario
     async register(req, res) {
         try {
-            // Extraemos los datos que nos envía el usuario desde el frontend
+            // Extracción de payload
             const { name, email, password } = req.body;
 
-            // VALIDACIONES DE NEGOCIO:
-            // Si algo falla, lanzamos nuestro 'ServerError' con un código 400 (Bad Request)
+            // Validaciones de negocio
             if (!name || name.length <= 2) {
                 throw new ServerError("Nombre debe ser mayor a 2 caracteres", 400)
             }
@@ -27,36 +24,36 @@ class AuthController {
                 throw new ServerError("Password debe tener al menos 6 caracteres", 400)
             }
 
-            // Llamamos al Repositorio para ver si el correo ya existe
+            // Verificación de existencia previa
             const existingUser = await userRepository.getByEmail(email);
             if (existingUser) {
                 throw new ServerError("El email ya está registrado", 400)
             }
 
-            // Encriptamos la contraseña para no guardarla en texto plano
+            // Hashing de contraseña
             const hashed_password = await bcrypt.hash(password, 12);
 
-            // Le pedimos al Repositorio que construya el usuario en la BD
+            // Creación de registro en BD
             const newUser = await userRepository.create(name, email, hashed_password);
 
-            // Creamos un token especial, solo para enviarlo por correo
+            // Generación de token de verificación
             const verification_token = jwt.sign(
                 { email: email },
                 ENVIRONMENT.JWT_SECRET
             )
 
-            // Enviamos el correo con Nodemailer usando nuestro enlace y token
+            // Envío de correo de verificación
             await mailer_transport.sendMail({
                 to: email,
                 from: ENVIRONMENT.GMAIL_USERNAME,
                 subject: "Verifica tu mail",
                 html: `
-                    <h1>Bienvenido a SLACK</h1>
+                    <h1>Bienvenido a MIB</h1>
                     <a href='${ENVIRONMENT.URL_BACKEND}/api/auth/verify-email?verification_token=${verification_token}'>Click aqui</a> para verificar tu cuenta
                 `
             })
 
-            // Si llegamos hasta aquí, todo fue un éxito (201: Created)
+            // Respuesta exitosa
             return res.status(201).json({
                 message: "Usuario registrado con éxito",
                 ok: true,
@@ -71,8 +68,7 @@ class AuthController {
             });
 
         } catch (error) {
-            // MANEJO DE ERRORES INTELIGENTE:
-            // Si el error es de tipo 'ServerError' (los que nosotros lanzamos), mostramos ese error
+            // Manejo de excepciones
             if (error instanceof ServerError) {
                 return res.status(error.status).json({
                     message: error.message,
@@ -80,7 +76,7 @@ class AuthController {
                     status: error.status
                 })
             } else {
-                // Si es un error desconocido (ej. se cayó la base de datos), devolvemos 500
+                // Manejo de error no controlado
                 console.error('Error critico:', error);
                 return res.status(500).json({
                     message: "Error interno del servidor",
@@ -91,19 +87,17 @@ class AuthController {
         }
     }
 
-    /* ====================================================================
-       2. VERIFICACIÓN DE EMAIL
-       ==================================================================== */
+    // Verificación de Email
     async verifyEmail(req, res) {
         try {
-            // Obtenemos el token de la URL (ej. ?verification_token=12345)
+            // Extracción de token
             const { verification_token } = req.query;
 
             if (!verification_token) {
                 throw new ServerError("Falta token de verificación", 400);
             }
 
-            // Decodificamos el token con nuestra palabra secreta para saber de quién es
+            // Decodificación de token
             const payload = jwt.verify(verification_token, ENVIRONMENT.JWT_SECRET)
             const { email } = payload
 
@@ -115,7 +109,7 @@ class AuthController {
                 throw new ServerError("Este email ya ha sido verificado", 400);
             }
 
-            // Actualizamos al usuario para marcarlo como verificado
+            // Actualización de estado
             await userRepository.updateById(user._id, { email_verified: true });
 
             return res.status(200).json({
@@ -126,7 +120,7 @@ class AuthController {
 
         }
         catch (error) {
-            // Manejamos específicamente los errores si el token expiró o fue hackeado
+            // Manejo de excepciones JWT
             if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.NotBeforeError || error instanceof jwt.TokenExpiredError) {
                 return res.status(401).json({ message: "Token invalido", ok: false, status: 401 })
             }
@@ -140,9 +134,7 @@ class AuthController {
         }
     }
 
-    /* ====================================================================
-       3. INICIO DE SESIÓN (LOGIN)
-       ==================================================================== */
+    // Autenticación de Usuario (Login)
     async login(request, response) {
         try {
             const { email, password } = request.body
@@ -162,13 +154,13 @@ class AuthController {
                 throw new ServerError("Usuario con verificacion de mail pendiente", 401)
             }
 
-            // Bcrypt compara la contraseña de texto plano con la encriptada en la DB
+            // Verificación de contraseña
             const is_same_password = await bcrypt.compare(password, user_found.password)
             if (!is_same_password) {
                 throw new ServerError("Credenciales invalidas", 401)
             }
 
-            // Creamos el perfil que irá guardado dentro de la "llave" (token)
+            // Creación de payload
             const profile_info = {
                 name: user_found.name,
                 email: user_found.email,
@@ -176,7 +168,7 @@ class AuthController {
                 created_at: user_found.created_at
             }
 
-            // Creamos la llave maestra para que el usuario navegue sin volver a poner contraseña
+            // Generación de JWT de acceso
             const access_token = jwt.sign(
                 profile_info,
                 ENVIRONMENT.JWT_SECRET
@@ -200,7 +192,7 @@ class AuthController {
         }
     }
 
-    /* --- 4. SOLICITUD RESTABLECER CONTRASEÑA --- */
+    // Solicitud de Restablecimiento de Contraseña
     async resetPasswordRequest(request, response) {
         try {
             const { email } = request.body;
@@ -256,6 +248,7 @@ class AuthController {
         }
     }
 
+    // Confirmación de Restablecimiento de Contraseña
     async resetPasswordConfirm(request, response) {
         try {
             const auth_header = request.headers.authorization

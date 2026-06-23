@@ -10,36 +10,35 @@ import postRouter from "./routes/post.router.js";
 import userRouter from "./routes/user.router.js";
 import searchRouter from "./routes/search.router.js";
 
-// Solo necesario si tienes problemas de DNS al conectar a MongoDB localmente
+// Configuración de DNS para desarrollo local
 import dns from 'dns';
 if (ENVIRONMENT.MODE === 'development') {
     dns.setServers(['8.8.8.8', '8.8.4.4']);
 }
 
-// 1. Conectamos a la Base de Datos
+// Conexión a Base de Datos
 connectMongoDB();
 
-// 2. Iniciamos la aplicación Express (Servidor Principal)
+// Inicialización de la aplicación Express
 const app = express();
 const PORT = ENVIRONMENT.PORT;
 
-// 2.5 Fusionamos Express con el Servidor HTTP nativo de Node y le conectamos Socket.io
+// Fusión de Express con Servidor HTTP nativo y Socket.io
 const httpServer = createServer(app);
 initializeSockets(httpServer);
 
-// 3. Configuraciones básicas
-app.use(cors()); // Permite peticiones desde el frontend (CORS)
-app.use(express.json()); // Permite que Express entienda el req.body en formato JSON
+// Middlewares Globales
+app.use(cors());
+app.use(express.json());
 
-// 4. Configuración de Rutas de Autenticación
-// Toda ruta que empiece con '/api/auth' será manejada por authRouter
+// Configuración de Rutas
 app.use('/api/auth', authRouter);
 app.use('/api/projects', projectRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/users', userRouter);
 app.use('/api/search', searchRouter);
 
-// 5. Middleware Global de Manejo de Errores (Archivos e Imágenes)
+// Middleware Global de Manejo de Errores
 app.use((err, req, res, next) => {
     console.error("🔥 Error Global:", err);
     if (err.message && err.message.includes('Must supply api_key')) {
@@ -48,7 +47,7 @@ app.use((err, req, res, next) => {
     return res.status(500).json({ ok: false, message: err.message || "Error interno", detalle: err });
 });
 
-// 6. Encendemos el Servidor HTTP (que ahora tiene a Express y Socket.io adentro)
+// Inicialización del Servidor HTTP
 httpServer.listen(PORT, () => {
     console.log(`🚀 Servidor REST y Sockets corriendo en http://localhost:${PORT}`);
 });

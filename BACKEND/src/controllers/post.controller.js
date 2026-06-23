@@ -9,7 +9,7 @@ class PostController {
             const userId = req.user.id 
             const postData = { ...req.body }
 
-            // Procesar las imágenes si existen (req.files es un array por ser upload.array)
+            // Procesamiento de archivos multimedia
             if (req.files && req.files.length > 0) {
                 postData.media = req.files.map(file => ({
                     url: file.path,
@@ -26,7 +26,7 @@ class PostController {
 
     async getFeed(req, res) {
         try {
-            // Extraemos los query params de la URL: /api/posts?limit=10&page=1
+            // Extracción de parámetros de paginación
             const limit = parseInt(req.query.limit) || 10
             const page = parseInt(req.query.page) || 1
             const posts = await postService.getFeed(limit, page)
@@ -43,7 +43,7 @@ class PostController {
             const updatedPost = await postService.updatePost(postId, req.body, userId)
             res.status(200).json({ ok: true, message: 'Post actualizado', data: updatedPost })
         } catch (error) {
-            // Si pasaron los 15 minutos, el error caerá directamente aquí
+            // Manejo de error de validación
             res.status(403).json({ ok: false, message: error.message })
         }
     }
@@ -74,7 +74,7 @@ class PostController {
     // ---- COMENTARIOS ----
     async createComment(req, res) {
         try {
-            // El usuario envía: { contenido: "Buen tema!" } a la ruta /api/posts/:postId/comments
+            // Armado de payload
             const commentData = { ...req.body, fk_id_post: req.params.postId }
             const userId = req.user.id
             const newComment = await commentService.createComment(commentData, userId)

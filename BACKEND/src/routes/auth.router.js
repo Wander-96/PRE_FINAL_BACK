@@ -1,18 +1,18 @@
-// src/routes/auth.router.js
-import express from 'express'
-import authController from '../controllers/auth.controller.js' // Traemos a nuestro Chef
 
-// Creamos al Mesero (Router)
+import express from 'express'
+import authController from '../controllers/auth.controller.js'
+
+// Inicialización de Router
 const authRouter = express.Router()
 
-// Le decimos: "Cuando el cliente pida un POST a /register, llévaselo a la función register del Chef"
+// Rutas de Registro
 authRouter.post('/register', authController.register)
 
-// Lo mismo para verificar email y login
+// Rutas de Acceso y Verificación
 authRouter.get('/verify-email', authController.verifyEmail)
 authRouter.post('/login', authController.login)
 authRouter.post('/reset-password-request', authController.resetPasswordRequest);
 authRouter.put('/reset-password', authController.resetPasswordConfirm);
 
-// Exportamos al mesero para que Servidor Principal (main.js) lo contrate
+// Exportación de Módulo
 export default authRouter

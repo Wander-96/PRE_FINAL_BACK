@@ -1,6 +1,6 @@
 # ⚡ MIB Backend: 100% Completado
 
-¡Hemos llegado a la cima! El Backend de *Musicians in Band* (MIB) está oficialmente terminado y cuenta con características dignas de una plataforma profesional (Cloudinary y ahora Socket.io).
+¡Hemos llegado a la cima! El Backend de *Music Is Better* (MIB) está oficialmente terminado y cuenta con características dignas de una plataforma profesional (Cloudinary y ahora Socket.io).
 
 ## 🛡️ Seguridad en Sockets
 Tal como solicitaste, mantuvimos los estándares altísimos:

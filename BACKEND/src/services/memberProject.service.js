@@ -9,7 +9,7 @@ import mailService from "./mail.service.js";
 
 class MemberProjectService {
 
-    //Enviar invitacion
+    // Enviar invitación a proyecto
     async inviteUser(user_invited_by_id, user_invited_email, project_id, role) {
         const userToInvite = await userRepository.getByEmail(user_invited_email);
         if (!userToInvite) {
@@ -37,7 +37,7 @@ class MemberProjectService {
             if (previousInvitation.status === MEMBER_INVITATION_STATUS.ACCEPTED) {
                 await projectInvitationRepository.deleteById(previousInvitation._id);
             }
-        } // Fin de verificación de invitación previa
+        }
 
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 30);
@@ -79,7 +79,7 @@ class MemberProjectService {
 
             await projectMemberRepository.create(
                 userThatAccepted._id,
-                invitation.fk_id_project, // BUG FIXED: Era project_id, no invited_by_id
+                invitation.fk_id_project,
                 invitation.role
             );
 

@@ -2,10 +2,8 @@ import nodemailer from 'nodemailer';
 import ENVIRONMENT from './environment.config.js'
 
 /*
-Creamos un "transportador" de emails usando Gmail y 
-las credenciales secretas que guardamos en nuestro archivo .env
+Configuración del transportador SMTP para el envío de correos electrónicos.
 */
-
 const mailer_transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {

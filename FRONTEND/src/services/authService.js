@@ -36,7 +36,7 @@ export async function register(email, password, username) {
             {
                 email: email,
                 password: password,
-                username: username
+                name: username // El Backend espera la propiedad "name"
             }
         )
     }

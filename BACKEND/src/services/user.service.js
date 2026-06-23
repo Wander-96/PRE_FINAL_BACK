@@ -1,12 +1,12 @@
 import userRepository from '../repositories/user.repository.js'
 
 class UserService {
-    // Ver mi propio perfil o el de otro músico
+    // Obtener perfil de usuario
     async getProfile(userId) {
         const user = await userRepository.getById(userId)
         if (!user) throw new Error('Usuario no encontrado')
 
-        // Nunca devolvemos el password ni datos sensibles de seguridad
+        // Retorno de datos seguros
         return {
             id: user._id,
             name: user.name,
@@ -19,12 +19,12 @@ class UserService {
         }
     }
 
-    // Editar perfil
+    // Actualizar perfil
     async updateProfile(userId, updateData) {
         const allowedUpdates = ['name', 'avatar', 'bio', 'instruments', 'social_links']
         const dataToUpdate = {}
 
-        // Filtramos solo los campos permitidos (Evita que inyecten un cambio de password o de rol por aquí)
+        // Filtrado de campos permitidos
         Object.keys(updateData).forEach(key => {
             if (allowedUpdates.includes(key)) {
                 dataToUpdate[key] = updateData[key]
@@ -33,7 +33,7 @@ class UserService {
 
         await userRepository.updateById(userId, dataToUpdate)
         
-        // Retornamos el perfil limpio y actualizado
+        // Retorno de perfil actualizado
         return await this.getProfile(userId)
     }
 }

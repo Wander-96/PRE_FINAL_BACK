@@ -151,6 +151,15 @@
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
+/* Success Alert */
+.success-message {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
 /* Remember Me & Forgot Password */
 .form-options {
     display: flex;

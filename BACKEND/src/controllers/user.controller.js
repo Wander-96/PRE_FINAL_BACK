@@ -1,7 +1,7 @@
 import userService from '../services/user.service.js'
 
 class UserController {
-    // 1. Obtener mi propio perfil
+    // Obtener perfil propio
     async getMyProfile(req, res) {
         try {
             const userId = req.user.id; // Extraído del token por el middleware
@@ -12,7 +12,7 @@ class UserController {
         }
     }
 
-    // 2. Obtener el perfil de otro usuario (ej: para ver la bio de un bajista)
+    // Obtener perfil de tercero
     async getUserProfile(req, res) {
         try {
             const { userId } = req.params;
@@ -23,12 +23,12 @@ class UserController {
         }
     }
 
-    // 3. Actualizar mi perfil
+    // Actualizar perfil propio
     async updateMyProfile(req, res) {
         try {
             const userId = req.user.id; 
             
-            // Si el usuario subió una imagen, Multer/Cloudinary nos la dejarán en req.file.path
+            // Procesamiento de avatar
             const updateData = { ...req.body };
             if (req.file) {
                 updateData.avatar = req.file.path; // Aquí guardamos la URL oficial de la nube

@@ -43,7 +43,7 @@ class MemberProjectController {
                 throw new ServerError("Decision no valida", 400);
             }
 
-            //Llamamos a nuestro servicio
+            // Llamada a servicio
             await memberProjectService.processInvitation(token, decision);
 
             return response.status(200).json({

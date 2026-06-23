@@ -7,27 +7,27 @@ import projectMemberRepository from "../repositories/projectMember.repository.js
 
 class ProjectController {
 
-    //1. CREAR UN proyecto musical
+    // Creación de proyecto
 
     async create(request, response) {
         try {
             const { name, description } = request.body;
 
-            //MIDDLEWARE: ID de usuario validado e inyectado por el middleware
+            // Extracción de ID validado
             const user_id = request.user.id;
 
-            //Validacion de negocio
+            // Validación de negocio
             if (!name || name.trim() === '') {
                 throw new ServerError("El nombre del proyecto musical es obligatorio", 400);
             }
 
-            //1. Le pedimos al repositorio crear el espacio
+            // Creación en repositorio
             const newProject = await projectRepository.create(
                 name,
                 description || ""
             );
 
-            //2. Le pedimos al repositorio de membresias que nos de la llave como dueños
+            // Asignación de rol OWNER
             await projectMemberRepository.create(
                 user_id,
                 newProject._id,
@@ -50,13 +50,12 @@ class ProjectController {
             }
         }
     }
-    //2. OBTENER MIS proyectos musicales
+    // Obtener proyectos del usuario
     async getAllByUser(request, response) {
         try {
             const user_id = request.user.id;
 
-            // Le pedimos al Repositorio que busque todas mis membresías
-            // Gracias al '.populate()',esto no solo trae la membresía, sino todos los datos del Project
+            // Búsqueda de membresías pobladas
             const projects = await projectMemberRepository.getByUserId(user_id);
 
             return response.status(200).json({
@@ -74,12 +73,12 @@ class ProjectController {
         }
     }
 
-    //3. ELIMINAR ESPACIO DE TRAJO (ADMIN)
+    // Eliminar proyecto (Admin)
     async deleteById(request, response) {
         try {
             const project_id = request.params.project_id
 
-            //soft delete (solo oculta)
+            // Soft Delete
             const deleted_project = await projectRepository.softDeleteById(project_id)
 
             return response.status(200).json({
@@ -109,13 +108,13 @@ class ProjectController {
         }
     }
 
-    // ACTUALIZAR proyecto musical 
+    // Actualizar proyecto
     async updateById(request, response) {
         try {
             const project_id = request.params.project_id
             const { name, description } = request.body
 
-            //Objeto vacio donde guardamos solo lo que el usuario envio
+            // Objeto de actualización parcial
             const updated_info = {}
 
             if (!name && !description) {
@@ -132,12 +131,12 @@ class ProjectController {
                 updated_info.description = description
             }
             
-            // Si el usuario subió una imagen de portada, guardamos la URL oficial de Cloudinary
+            // Procesamiento de imagen de portada
             if (request.file) {
                 updated_info.cover_image = request.file.path;
             }
 
-            //Pasamos el objeto solo con los campos que se actualizaron
+            // Actualización en repositorio
             await projectRepository.updateById(project_id, updated_info)
             const project_after_update = await projectRepository.getById(project_id)
 

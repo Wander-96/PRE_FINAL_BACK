@@ -2,7 +2,7 @@ import postRepository from '../repositories/post.repository.js'
 
 class PostService {
     async createPost(postData, userId) {
-        // En el futuro aquí podríamos hacer web scraping para generar el link_preview
+        // Funcionalidad futura: Web scraping para link_preview
         postData.fk_id_user = userId
         return await postRepository.create(postData)
     }
@@ -15,12 +15,12 @@ class PostService {
         const post = await postRepository.getById(postId)
         if (!post) throw new Error('Post no encontrado')
 
-        // Validación 1: Solo el autor puede editar
+        // Validación de Autoría
         if (post.fk_id_user._id.toString() !== userId.toString()) {
             throw new Error('No tienes permisos para editar este post')
         }
 
-        // Validación 2: Ventana de 15 minutos (900,000 milisegundos)
+        // Validación de ventana de edición (15 min)
         const timeElapsed = Date.now() - new Date(post.createdAt).getTime()
         if (timeElapsed > 900000) {
             throw new Error('El tiempo límite para editar este post ha expirado (15 minutos)')
@@ -37,7 +37,7 @@ class PostService {
             throw new Error('No tienes permisos para eliminar este post')
         }
 
-        // Aplicamos borrado lógico para no romper los reposts
+        // Soft Delete
         return await postRepository.softDelete(postId)
     }
 }
