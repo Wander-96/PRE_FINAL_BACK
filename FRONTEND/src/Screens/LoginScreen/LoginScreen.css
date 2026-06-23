@@ -1,0 +1,244 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    /* Un ligero resplandor púrpura en el fondo de la pantalla completa */
+    background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.05) 0%, var(--bg-app) 100%);
+}
+
+/* El logo superior izquierdo */
+.login-logo {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.login-modal {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background-color: var(--bg-panel);
+    border-radius: 20px;
+    overflow: hidden;
+    /* Borde sutil y resplandor estilo neón */
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-glow), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* --- LADO IZQUIERDO (IMAGEN) --- */
+.login-image-side {
+    flex: 1;
+    position: relative;
+    display: none;
+    background-color: #000;
+}
+
+/* Mostramos la imagen solo en pantallas grandes */
+@media (min-width: 768px) {
+    .login-image-side {
+        display: block;
+    }
+}
+
+.login-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.login-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+}
+
+.login-image-overlay h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.login-image-overlay p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.badge-2fa {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin-left: 0.5rem;
+}
+
+/* --- LADO DERECHO (FORMULARIO) --- */
+.login-form-side {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.login-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-header p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Input Fields */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background-color: var(--bg-input);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background-color: #222228;
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+}
+
+/* Error Alert */
+.error-message {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Remember Me & Forgot Password */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: var(--text-secondary);
+}
+
+.forgot-password:hover {
+    color: var(--accent-primary);
+}
+
+/* Buttons */
+.btn-primary {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    margin-top: 0.5rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    background-color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* Social Login Dividers */
+.social-login-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-social {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-social:hover {
+    background-color: #2A2A32;
+}
+
+/* Footer links */
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.login-footer a {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.login-footer a:hover {
+    color: var(--text-primary);
+}
