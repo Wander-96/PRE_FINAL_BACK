@@ -35,7 +35,7 @@ export const ProfileScreen = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
 
-    // Si no viene userId en la ruta, asumimos que es el perfil propio del usuario logueado
+    // Self profile check
     const isOwnProfile = !userId || (currentUser && userId === currentUser.id);
     const targetUserId = userId || (currentUser ? currentUser.id : null);
 
@@ -50,11 +50,9 @@ export const ProfileScreen = () => {
     const [editValue, setEditValue] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
-    // Media Modal (Lightbox) state
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMediaIndex, setModalMediaIndex] = useState(0);
 
-    // Cerrar modal con la tecla ESC
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
@@ -67,14 +65,11 @@ export const ProfileScreen = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isModalOpen]);
 
-    // Como por ahora no tenemos endpoint de getProfileByID, 
-    // usaremos la data del currentUser si es perfil propio. 
-    // (A futuro: hacer fetch a /api/users/:userId)
+    // Temporary current user assignment for own profile
     useEffect(() => {
         if (isOwnProfile && currentUser) {
             setProfileUser(currentUser);
         }
-        // Si no es propio, necesitarías llamar a un fetchUserById(targetUserId) aquí
     }, [isOwnProfile, currentUser, targetUserId]);
 
     const fetchUserPosts = async () => {
@@ -82,7 +77,6 @@ export const ProfileScreen = () => {
         try {
             setIsLoading(true);
             const data = await getPostsByUser(targetUserId);
-            // Asumiendo que el backend retorna data.data.docs para paginación o un array
             const postsArray = Array.isArray(data.data) ? data.data : (data.data.docs || []);
             setPosts(postsArray);
         } catch (err) {
@@ -136,11 +130,9 @@ export const ProfileScreen = () => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Error al guardar');
 
-            // Actualizar contexto
             const updatedUser = { ...currentUser, ...data.data };
             loginUser(token, updatedUser);
             
-            // Actualizar estado local si es perfil propio
             if (isOwnProfile) {
                 setProfileUser(updatedUser);
             }
@@ -154,7 +146,7 @@ export const ProfileScreen = () => {
 
     if (!profileUser) return <div className="loading-profile">Cargando perfil...</div>;
 
-    // Foto de perfil oficial con fallback y fix de URL
+    // Avatar setup
     const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser.name)}&background=8b5cf6&color=fff`;
     const avatarUrl = profileUser.avatar 
         ? (profileUser.avatar.startsWith('http') ? profileUser.avatar : `${ENVIRONMENT.URL_API}/${profileUser.avatar.replace(/\\/g, '/')}`)
@@ -162,7 +154,7 @@ export const ProfileScreen = () => {
 
     const dummyConnections = [];
 
-    // Extraer toda la media de todos los posts para la pestaña "Fotos"
+    // Aggregate media from all posts
     const allMedia = posts.reduce((acc, post) => {
         if (post.media && post.media.length > 0) {
             const mediaWithPost = post.media.map((m, index) => ({
@@ -248,7 +240,7 @@ export const ProfileScreen = () => {
                     ))}
                 </div>
             </div>
-            {/* CONTENIDO PRINCIPAL */}
+            
             <div className={`profile-content-grid ${(activeTab === 'Información' || activeTab === 'Fotos') ? 'full-width' : ''}`}>
                 
                 {(activeTab === 'Publicaciones' || activeTab === 'Conexiones') && (
@@ -274,18 +266,15 @@ export const ProfileScreen = () => {
                     </div>
                 )}
 
-                {/* COLUMNA DERECHA: Muro del usuario u otras pestañas */}
                 <div className="profile-right-col">
                     {activeTab === 'Publicaciones' && (
                         <>
-                            {/* Crear Publicación (solo si es el perfil propio) */}
                             {isOwnProfile && (
                                 <div className="profile-create-post">
                                     <CreatePostWidget onPostCreated={handlePostCreated} />
                                 </div>
                             )}
 
-                            {/* Filtros decorativos estilo Facebook */}
                             <div className="profile-card posts-filter-card">
                                 <h3>Publicaciones</h3>
                                 <div className="filter-buttons">
@@ -294,7 +283,6 @@ export const ProfileScreen = () => {
                                 </div>
                             </div>
 
-                            {/* Feed de Publicaciones */}
                             <div className="profile-feed">
                                 {isLoading ? (
                                     <p className="loading-text">Cargando publicaciones...</p>
@@ -323,7 +311,6 @@ export const ProfileScreen = () => {
                             <h3>Acerca de</h3>
                             
                             <ul className="bio-list">
-                                {/* BIO INLINE EDIT */}
                                 {editingField === 'bio' ? (
                                     <li className="inline-edit-form">
                                         <textarea 
@@ -352,7 +339,6 @@ export const ProfileScreen = () => {
                                     </li>
                                 )}
 
-                                {/* FECHA DE NACIMIENTO INLINE EDIT */}
                                 {editingField === 'birth_date' ? (
                                     <li className="inline-edit-form">
                                         <input 
@@ -383,7 +369,6 @@ export const ProfileScreen = () => {
                                     </li>
                                 )}
 
-                                {/* REDES SOCIALES INLINE EDIT */}
                                 {editingField === 'social_links' ? (
                                     <li className="inline-edit-form">
                                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
@@ -477,7 +462,6 @@ export const ProfileScreen = () => {
                 </div>
             </div>
 
-            {/* Facebook Style Post Detail Modal */}
             {isModalOpen && allMedia.length > 0 && (
                 <PostDetailModal 
                     post={allMedia[modalMediaIndex].post}

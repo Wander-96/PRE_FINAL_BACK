@@ -20,18 +20,14 @@ export const LoginScreen = () => {
         e.preventDefault();
         setError(null);
         setIsLoading(true);
-
         try {
-            // Llamamos al servicio (que apunta a nuestro Backend)
             const response = await login(email, password);
             
             const token = response.data.access_token;
             const decodedUser = jwtDecode(token);
 
-            // Si funciona, guardamos el token y la info en el Context (cerebro)
             loginUser(token, decodedUser);
 
-            // Redirigimos según si el perfil está completo
             if (decodedUser.is_profile_complete === false) {
                 navigate('/setup-profile');
             } else {
@@ -46,19 +42,9 @@ export const LoginScreen = () => {
 
     return (
         <div className="login-container">
-            {/* Fondo de video a pantalla completa */}
             <video src={loginVideo} poster={loginWave} className="login-video-bg" autoPlay loop muted playsInline />
 
-
-
-            {/* EL LOGO VIENE AQUI 
-        
-        */}
-
-
-            {/* Caja modal central (Glassmorphism flotante) */}
             <div className="login-modal">
-                {/* Lado Derecho: Formulario */}
                 <div className="login-form-side">
                     <div className="login-header">
                         <h1>Welcome back to MIB</h1>

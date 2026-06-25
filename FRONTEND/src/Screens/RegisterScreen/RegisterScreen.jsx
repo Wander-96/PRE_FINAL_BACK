@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { register } from '../../services/authService';
-import loginVideo from '../../assets/login_animated_background.mp4'; // Reutilizamos el fondo animado
-import loginWave from '../../assets/login_wave.png'; // Póster de carga
-import '../LoginScreen/LoginScreen.css'; // Reutilizamos la base del login
+import loginVideo from '../../assets/login_animated_background.mp4';
+import loginWave from '../../assets/login_wave.png';
+import '../LoginScreen/LoginScreen.css';
 
 export const RegisterScreen = () => {
     const navigate = useNavigate();
@@ -21,10 +21,8 @@ export const RegisterScreen = () => {
         setIsLoading(true);
 
         try {
-            // Llamamos al servicio de registro
             await register(email, password, username);
             
-            // Si el registro fue exitoso
             setSuccessMessage('Account created successfully! Redirecting to login...');
             
             setTimeout(() => {
@@ -40,16 +38,13 @@ export const RegisterScreen = () => {
 
     return (
         <div className="login-container">
-            {/* Fondo de video a pantalla completa con filtro para Register */}
             <video src={loginVideo} poster={loginWave} className="login-video-bg" style={{ filter: 'hue-rotate(-20deg)' }} autoPlay loop muted playsInline />
 
-            {/* Logo */}
             <div className="login-logo">
                 <span style={{color: 'var(--accent-primary)'}}>🎵</span> MIB
             </div>
 
             <div className="login-modal">
-                {/* Formulario */}
                 <div className="login-form-side">
                     <div className="login-header">
                         <h1>Create your Account</h1>

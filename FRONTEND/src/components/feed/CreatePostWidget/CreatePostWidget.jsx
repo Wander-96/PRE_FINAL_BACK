@@ -32,7 +32,7 @@ export const CreatePostWidget = ({ onPostCreated }) => {
     };
   }, []);
 
-  // Escanear enlace de YT en vivo
+  // Scan for YT link
   useEffect(() => {
     const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
     const match = content.match(ytRegex);

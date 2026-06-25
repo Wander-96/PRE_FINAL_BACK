@@ -58,7 +58,6 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMediaIndex, setModalMediaIndex] = useState(0);
 
-  // Cerrar modal con la tecla ESC
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -76,10 +75,8 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const authorInitial = authorName.charAt(0).toUpperCase();
   const time = new Date(post.createdAt).toLocaleString();
 
-  // Procesamos la multimedia
   const media = post.media || [];
   
-  // Limite de 15 minutos para editar
   const canEditPost = (Date.now() - new Date(post.createdAt).getTime()) <= 900000;
 
   // Función para convertir URLs en enlaces clickeables y extraer ID de YouTube
@@ -185,7 +182,7 @@ export const PostCard = ({ post, onPostDeleted }) => {
 
   const handleKeyDownComment = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Evita el salto de linea predeterminado
+      e.preventDefault();
       handlePostComment();
     }
   };
@@ -215,8 +212,6 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const handleUpdatePostFromModal = (updatedPost) => {
     setLikesCount(updatedPost.likesCount);
     if (updatedPost.commentsCount !== undefined) {
-      // Si el modal nos pasa la cuenta, la tomamos.
-      // O podríamos actualizar el post object directamente.
       post.commentsCount = updatedPost.commentsCount;
     }
   };
@@ -277,7 +272,6 @@ export const PostCard = ({ post, onPostDeleted }) => {
           <span className="post-time">{time}</span>
         </div>
         
-        {/* Post Options Menu */}
         {user && user.id === author?._id && (
           <div className="post-options">
             <button className="btn-icon" onClick={() => setShowOptions(!showOptions)}>
@@ -438,7 +432,6 @@ export const PostCard = ({ post, onPostDeleted }) => {
         </div>
       )}
 
-      {/* Facebook Style Post Detail Modal */}
       {isModalOpen && (
         <PostDetailModal 
           post={post} 
