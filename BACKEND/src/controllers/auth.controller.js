@@ -165,7 +165,8 @@ class AuthController {
                 name: user_found.name,
                 email: user_found.email,
                 id: user_found._id,
-                created_at: user_found.created_at
+                created_at: user_found.created_at,
+                is_profile_complete: user_found.is_profile_complete
             }
 
             // Generación de JWT de acceso

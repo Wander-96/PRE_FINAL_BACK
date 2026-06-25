@@ -21,6 +21,19 @@ export const getFeed = async (page = 1, limit = 10) => {
     return data; 
 };
 
+export const getPostsByUser = async (userId, page = 1, limit = 10) => {
+    const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/user/${userId}?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Error al obtener las publicaciones del usuario');
+    }
+    return data;
+};
+
 export const createPost = (formData, onProgress) => {
     return new Promise((resolve, reject) => {
         const token = localStorage.getItem('access_token');
@@ -88,11 +101,11 @@ export const deletePost = async (postId) => {
     return data;
 };
 
-export const updatePost = async (postId, content) => {
+export const updatePost = async (postId, postData) => {
     const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/${postId}`, {
         method: 'PUT',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ content })
+        body: JSON.stringify(postData)
     });
 
     const data = await response.json();

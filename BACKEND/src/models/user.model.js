@@ -9,7 +9,15 @@ Mongoose usará esto para evitar que guardemos basura en la base de datos.
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,// Si alguien intenta crear un usuario sin nombre, Mongoose dará error
+        required: true,
+    },
+    last_name: {
+        type: String,
+        default: ""
+    },
+    birth_date: {
+        type: Date,
+        default: null
     },
     email: {
         type: String,
@@ -39,8 +47,16 @@ const userSchema = new mongoose.Schema({
     },
     email_verified: {
         type: Boolean,
-        default: false, // Por defecto al registrarse, el correo no está verificado
+        default: false,
         required: true,
+    },
+    country: {
+        type: String,
+        default: ""
+    },
+    is_profile_complete: {
+        type: Boolean,
+        default: false
     },
     created_at: {
         type: Date,

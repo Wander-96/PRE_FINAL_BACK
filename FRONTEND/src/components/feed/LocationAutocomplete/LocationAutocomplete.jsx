@@ -7,6 +7,7 @@ export const LocationAutocomplete = ({ value, onChange, disabled }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   
   const dropdownRef = useRef(null);
   const debounceTimer = useRef(null);
@@ -54,6 +55,7 @@ export const LocationAutocomplete = ({ value, onChange, disabled }) => {
       // Eliminar duplicados simples
       const uniqueSuggestions = [...new Set(formattedSuggestions)];
       setSuggestions(uniqueSuggestions);
+      setFocusedIndex(-1);
       setShowDropdown(true);
     } catch (error) {
       console.error('Error fetching location:', error);
@@ -78,6 +80,29 @@ export const LocationAutocomplete = ({ value, onChange, disabled }) => {
     setQuery(suggestion);
     onChange(suggestion);
     setShowDropdown(false);
+    setFocusedIndex(-1);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!showDropdown || suggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < suggestions.length) {
+        handleSelect(suggestions[focusedIndex]);
+      } else if (suggestions.length > 0) {
+        handleSelect(suggestions[0]);
+      }
+    } else if (e.key === 'Escape') {
+      setShowDropdown(false);
+      setFocusedIndex(-1);
+    }
   };
 
   return (
@@ -89,6 +114,7 @@ export const LocationAutocomplete = ({ value, onChange, disabled }) => {
           placeholder="Add location (e.g. Buenos Aires, Argentina)"
           value={query}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onFocus={() => { if(suggestions.length > 0) setShowDropdown(true); }}
           disabled={disabled}
           className="location-input"
@@ -102,8 +128,9 @@ export const LocationAutocomplete = ({ value, onChange, disabled }) => {
           {suggestions.map((suggestion, index) => (
             <li 
               key={index} 
-              className="location-dropdown-item"
+              className={`location-dropdown-item ${index === focusedIndex ? 'active' : ''}`}
               onClick={() => handleSelect(suggestion)}
+              onMouseEnter={() => setFocusedIndex(index)}
             >
               <Search size={14} className="location-dropdown-icon" />
               {suggestion}

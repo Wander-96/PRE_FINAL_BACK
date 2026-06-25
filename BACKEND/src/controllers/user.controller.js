@@ -34,6 +34,21 @@ class UserController {
                 updateData.avatar = req.file.path; // Aquí guardamos la URL oficial de la nube
             }
 
+            // Parsear social_links si viene como string desde FormData
+            if (updateData.social_links && typeof updateData.social_links === 'string') {
+                try {
+                    updateData.social_links = JSON.parse(updateData.social_links);
+                } catch (e) {
+                    console.error("Error parseando social_links", e);
+                }
+            }
+
+            // Lógica de perfil completo: si estamos actualizando desde la pantalla de setup, 
+            // marcamos el perfil como completo. Podemos simplemente setearlo si manda last_name y country.
+            if (updateData.last_name || updateData.country) {
+                updateData.is_profile_complete = true;
+            }
+
             const updatedProfile = await userService.updateProfile(userId, updateData);
             return res.status(200).json({ 
                 ok: true, 

@@ -3,7 +3,37 @@ import { AuthContext } from '../../../context/AuthContext';
 import { toggleLike, deletePost, updatePost } from '../../../services/postService';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService';
 import { MoreVertical, Trash2, Heart, MessageCircle, Send, Edit2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PostDetailModal } from '../PostDetailModal/PostDetailModal';
 import './PostCard.css';
+
+export const CommentText = ({ text }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const lines = text.split('\n');
+  const isLong = lines.length > 3 || text.length > 150;
+
+  if (!isLong || isExpanded) {
+    return (
+      <div className="comment-text-wrapper">
+        <p className="comment-text">{text}</p>
+        {isLong && <button className="btn-see-more" onClick={() => setIsExpanded(false)}>Ver menos</button>}
+      </div>
+    );
+  }
+
+  // Truncate logic
+  let truncatedText = lines.slice(0, 3).join('\n');
+  if (truncatedText.length > 150) {
+    truncatedText = truncatedText.substring(0, 150);
+  }
+  truncatedText += '...';
+
+  return (
+    <div className="comment-text-wrapper">
+      <p className="comment-text">{truncatedText}</p>
+      <button className="btn-see-more" onClick={() => setIsExpanded(true)}>Ver más</button>
+    </div>
+  );
+};
 
 export const PostCard = ({ post, onPostDeleted }) => {
   const { user } = useContext(AuthContext);
@@ -14,6 +44,7 @@ export const PostCard = ({ post, onPostDeleted }) => {
   // Edit Post state
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
+  const [editMedia, setEditMedia] = useState(post.media || []);
   
   // Comments state
   const [comments, setComments] = useState([]);
@@ -26,6 +57,20 @@ export const PostCard = ({ post, onPostDeleted }) => {
   // Media Modal (Lightbox) state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMediaIndex, setModalMediaIndex] = useState(0);
+
+  // Cerrar modal con la tecla ESC
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+    if (isModalOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen]);
+
   const author = post.fk_id_user;
   const authorName = author?.name || 'Musician';
   const authorInitial = authorName.charAt(0).toUpperCase();
@@ -93,8 +138,9 @@ export const PostCard = ({ post, onPostDeleted }) => {
 
   const handleUpdatePost = async () => {
     try {
-      await updatePost(post._id, editContent);
+      await updatePost(post._id, { content: editContent, media: editMedia });
       post.content = editContent; // local update
+      post.media = editMedia;
       setIsEditingPost(false);
     } catch (error) {
       console.error(error);
@@ -122,7 +168,7 @@ export const PostCard = ({ post, onPostDeleted }) => {
   };
 
   const handlePostComment = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!newComment.trim()) return;
     try {
       const data = await createComment(post._id, newComment);
@@ -134,6 +180,13 @@ export const PostCard = ({ post, onPostDeleted }) => {
       setNewComment('');
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleKeyDownComment = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault(); // Evita el salto de linea predeterminado
+      handlePostComment();
     }
   };
 
@@ -159,6 +212,15 @@ export const PostCard = ({ post, onPostDeleted }) => {
     }
   };
 
+  const handleUpdatePostFromModal = (updatedPost) => {
+    setLikesCount(updatedPost.likesCount);
+    if (updatedPost.commentsCount !== undefined) {
+      // Si el modal nos pasa la cuenta, la tomamos.
+      // O podríamos actualizar el post object directamente.
+      post.commentsCount = updatedPost.commentsCount;
+    }
+  };
+
   const openModal = (index) => {
     setModalMediaIndex(index);
     setIsModalOpen(true);
@@ -179,14 +241,14 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const renderMediaGallery = () => {
     if (!media || media.length === 0) return null;
 
-    const displayMedia = media.slice(0, 4);
-    const layoutClass = `media-layout-${Math.min(media.length, 4)}`;
+    const displayMedia = media.slice(0, 3);
+    const layoutClass = `media-layout-${Math.min(media.length, 3)}`;
     
     return (
       <div className={`post-media-gallery ${layoutClass}`}>
         {displayMedia.map((item, index) => {
-          const isLast = index === 3;
-          const hasMore = media.length > 4;
+          const isLast = index === 2;
+          const hasMore = media.length > 3;
           return (
             <div key={index} className="post-media-item" onClick={() => openModal(index)}>
               {item.type === 'VIDEO' ? (
@@ -195,7 +257,7 @@ export const PostCard = ({ post, onPostDeleted }) => {
                 <img src={item.url} alt="media" className="post-media-img" />
               )}
               {isLast && hasMore && (
-                <div className="media-overlay">+{media.length - 4}</div>
+                <div className="media-overlay">+{media.length - 3}</div>
               )}
             </div>
           );
@@ -224,7 +286,12 @@ export const PostCard = ({ post, onPostDeleted }) => {
             {showOptions && (
               <div className="post-options-menu">
                 {canEditPost && (
-                  <button className="btn-edit" onClick={() => { setIsEditingPost(true); setShowOptions(false); }}>
+                  <button className="btn-edit" onClick={() => { 
+                    setIsEditingPost(true); 
+                    setEditContent(post.content);
+                    setEditMedia(post.media || []);
+                    setShowOptions(false); 
+                  }}>
                     <Edit2 size={16} /> Editar
                   </button>
                 )}
@@ -250,6 +317,22 @@ export const PostCard = ({ post, onPostDeleted }) => {
               value={editContent} 
               onChange={(e) => setEditContent(e.target.value)}
             />
+            {editMedia.length > 0 && (
+              <div className="post-edit-media-gallery">
+                {editMedia.map((item, index) => (
+                  <div key={index} className="edit-media-item">
+                    {item.type === 'VIDEO' ? (
+                      <video src={item.url} muted />
+                    ) : (
+                      <img src={item.url} alt="media" />
+                    )}
+                    <button className="btn-remove-media" onClick={() => setEditMedia(editMedia.filter((_, i) => i !== index))}>
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="post-edit-actions">
               <button className="btn-cancel" onClick={() => setIsEditingPost(false)}>Cancelar</button>
               <button className="btn-save" onClick={handleUpdatePost}>Guardar</button>
@@ -288,12 +371,13 @@ export const PostCard = ({ post, onPostDeleted }) => {
       {showComments && (
         <div className="post-comments-section">
           <form className="comment-form" onSubmit={handlePostComment}>
-            <input 
-              type="text" 
+            <textarea 
               placeholder="Escribe un comentario..." 
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
+              onKeyDown={handleKeyDownComment}
               className="comment-input"
+              rows={1}
             />
             <button type="submit" className="btn-comment-submit" disabled={!newComment.trim()}>
               <Send size={16} />
@@ -318,11 +402,12 @@ export const PostCard = ({ post, onPostDeleted }) => {
                     </div>
                     {editingCommentId === comment._id ? (
                       <div className="comment-edit-form">
-                        <input 
-                          type="text" 
+                        <textarea 
                           value={editCommentText} 
                           onChange={(e) => setEditCommentText(e.target.value)} 
                           className="comment-edit-input"
+                          rows={2}
+                          style={{ resize: 'vertical' }}
                         />
                         <div className="post-edit-actions" style={{ marginTop: '4px' }}>
                           <button className="btn-cancel" onClick={() => setEditingCommentId(null)}>Cancelar</button>
@@ -330,7 +415,7 @@ export const PostCard = ({ post, onPostDeleted }) => {
                         </div>
                       </div>
                     ) : (
-                      <p className="comment-text">{comment.content}</p>
+                      <CommentText text={comment.content} />
                     )}
                   </div>
                   {user && user.id === comment.fk_id_user?._id && (
@@ -353,27 +438,14 @@ export const PostCard = ({ post, onPostDeleted }) => {
         </div>
       )}
 
-      {/* Lightbox Modal para Galería */}
-      {isModalOpen && media.length > 0 && (
-        <div className="media-modal-overlay" onClick={closeModal}>
-          <button className="modal-close-btn" onClick={closeModal}><X size={24} /></button>
-          
-          {media.length > 1 && (
-            <button className="modal-nav-btn prev" onClick={prevMedia}><ChevronLeft size={32} /></button>
-          )}
-          
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            {media[modalMediaIndex].type === 'VIDEO' ? (
-              <video src={media[modalMediaIndex].url} controls autoPlay />
-            ) : (
-              <img src={media[modalMediaIndex].url} alt="Full view" />
-            )}
-          </div>
-
-          {media.length > 1 && (
-            <button className="modal-nav-btn next" onClick={nextMedia}><ChevronRight size={32} /></button>
-          )}
-        </div>
+      {/* Facebook Style Post Detail Modal */}
+      {isModalOpen && (
+        <PostDetailModal 
+          post={post} 
+          initialMediaIndex={modalMediaIndex} 
+          onClose={closeModal} 
+          onUpdatePost={handleUpdatePostFromModal}
+        />
       )}
     </div>
   );

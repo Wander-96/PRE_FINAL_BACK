@@ -31,8 +31,12 @@ export const LoginScreen = () => {
             // Si funciona, guardamos el token y la info en el Context (cerebro)
             loginUser(token, decodedUser);
 
-            // Redirigimos al muro
-            navigate('/home');
+            // Redirigimos según si el perfil está completo
+            if (decodedUser.is_profile_complete === false) {
+                navigate('/setup-profile');
+            } else {
+                navigate('/home');
+            }
         } catch (err) {
             setError(err.message || 'Error al iniciar sesión');
         } finally {
