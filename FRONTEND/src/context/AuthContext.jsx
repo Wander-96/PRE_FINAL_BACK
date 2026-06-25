@@ -6,9 +6,19 @@ export const AuthContext = createContext();
 // Componente Proveedor: Envuelve a toda la aplicación
 export const AuthContextProvider = ({ children }) => {
     
-    // Leemos de LocalStorage por si el usuario recargó la página (F5) para no perder su sesión
+    // Leemos de LocalStorage de forma segura
+    let initialUser = null;
+    try {
+        const stored = localStorage.getItem('user');
+        if (stored && stored !== "undefined") {
+            initialUser = JSON.parse(stored);
+        }
+    } catch (e) {
+        console.error("Error leyendo user de localStorage", e);
+    }
+
     const [token, setToken] = useState(localStorage.getItem('access_token'));
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+    const [user, setUser] = useState(initialUser);
     
     // Si hay token guardado, consideramos que está autenticado
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);

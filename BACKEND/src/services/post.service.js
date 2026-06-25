@@ -11,6 +11,16 @@ class PostService {
         return await postRepository.getFeed(limit, page)
     }
 
+    async getPostById(postId) {
+        const post = await postRepository.getById(postId)
+        if (!post) throw new Error('Post no encontrado')
+        return post
+    }
+
+    async getPostsByUser(userId, limit, page) {
+        return await postRepository.getByUserId(userId, limit, page)
+    }
+
     async updatePost(postId, updateData, userId) {
         const post = await postRepository.getById(postId)
         if (!post) throw new Error('Post no encontrado')

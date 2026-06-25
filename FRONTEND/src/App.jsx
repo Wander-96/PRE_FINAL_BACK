@@ -7,6 +7,7 @@ import { ResetPasswordScreen } from './Screens/ResetPasswordScreen/ResetPassword
 import { AuthContextProvider } from './context/AuthContext'
 import AuthMiddleware from './middlewares/AuthMiddleware'
 import AlreadyAuthMiddleware from './middlewares/AlreadyAuthMiddleware'
+import { MainLayout } from './components/layout/MainLayout/MainLayout'
 
 
 const App = () => {
@@ -36,11 +37,16 @@ const App = () => {
         <Route
           element={<AuthMiddleware />}
         >
-          <Route
-            path='/home'
-            element={<HomeScreen />}
-          />
-
+          <Route element={<MainLayout />}>
+            <Route
+              path='/home'
+              element={<HomeScreen />}
+            />
+            {/* Rutas futuras protegidas irán aquí para que compartan el Sidebar */}
+            <Route path='/projects' element={<h2>Projects (En construcción)</h2>} />
+            <Route path='/search' element={<h2>Search (En construcción)</h2>} />
+            <Route path='/profile' element={<h2>Profile (En construcción)</h2>} />
+          </Route>
         </Route>
 
         <Route

@@ -4,7 +4,8 @@ const postSchema = new mongoose.Schema(
     {
         content: {
             type: String,
-            required: true,
+            required: false,
+            default: '',
             maxlength: 8000 // Permitimos posts extensos, formato blog
         },
         media: {
@@ -22,6 +23,10 @@ const postSchema = new mongoose.Schema(
                 },
                 message: 'No puedes subir más de 20 archivos (imágenes/videos) por publicación.'
             }
+        },
+        location: {
+            type: String, // Guardará el texto manual ingresado por el usuario (ej: "Buenos Aires, Argentina")
+            default: null
         },
         link_preview: { // Para mostrar la miniatura de YouTube o Spotify
             url: String,

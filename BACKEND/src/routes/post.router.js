@@ -5,25 +5,23 @@ import uploadMiddleware from '../middlewares/upload.middleware.js'
 
 const postRouter = express.Router()
 
-// IMPORTANTE: Todas las rutas del muro requieren estar logueado (Tener un Token JWT válido)
+// Todas las rutas requieren autenticación
 postRouter.use(authMiddleware)
 
 // ==== RUTAS DE PUBLICACIONES (POSTS) ====
-postRouter.get('/', postController.getFeed) // Obtener el muro
-// Permite subir hasta 10 archivos bajo el campo 'media'
-postRouter.post('/', uploadMiddleware.array('media', 10), postController.createPost) // Crear publicación
+
+// Obtener publicaciones de un usuario específico
+postRouter.get('/user/:userId', postController.getPostsByUser)
+
+// Operaciones sobre posts específicos
+postRouter.get('/:postId', postController.getPostById) // Traer un post
 postRouter.put('/:postId', postController.updatePost) // Editar publicación (Regla 15 min)
 postRouter.delete('/:postId', postController.deletePost) // Borrar publicación (Soft Delete)
 
+// Permite subir hasta 10 archivos bajo el campo 'media'
+postRouter.post('/', uploadMiddleware.array('media', 10), postController.createPost) // Crear publicación
+
 // ==== RUTAS DE LIKES ====
-postRouter.post('/:postId/like', postController.toggleLike) // Dar o quitar Like (Toggle)
-
-// ==== RUTAS DE COMENTARIOS ====
-postRouter.get('/:postId/comments', postController.getCommentsByPost) // Ver comentarios
-postRouter.post('/:postId/comments', postController.createComment) // Comentar un post
-
-// Nota: Para editar/borrar comentarios, la URL no necesita el ID del post, solo el del comentario
-postRouter.put('/comments/:commentId', postController.updateComment) 
-postRouter.delete('/comments/:commentId', postController.deleteComment)
+postRouter.patch('/:postId/like', postController.toggleLike) // Dar o quitar Like (Toggle) con PATCH
 
 export default postRouter

@@ -9,6 +9,8 @@ import projectRouter from "./routes/project.router.js";
 import postRouter from "./routes/post.router.js";
 import userRouter from "./routes/user.router.js";
 import searchRouter from "./routes/search.router.js";
+import commentRouter from "./routes/comment.router.js";
+import feedRouter from "./routes/feed.router.js";
 
 // Configuración de DNS para desarrollo local
 import dns from 'dns';
@@ -37,6 +39,8 @@ app.use('/api/projects', projectRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/users', userRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/comments', commentRouter);
+app.use('/api/feed', feedRouter);
 
 // Middleware Global de Manejo de Errores
 app.use((err, req, res, next) => {

@@ -23,6 +23,19 @@ class PostRepository {
         return await Post.findById(postId).populate('fk_id_user', 'name apellido avatar')
     }
 
+    async getByUserId(userId, limit = 10, page = 1) {
+        const skip = (page - 1) * limit
+        return await Post.find({ fk_id_user: userId, status: 'ACTIVE' })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .populate('fk_id_user', 'name apellido avatar')
+            .populate({
+                path: 'fk_id_reposted_post',
+                populate: { path: 'fk_id_user', select: 'name apellido avatar' }
+            })
+    }
+
     async update(postId, updateData) {
         return await Post.findByIdAndUpdate(postId, updateData, { new: true })
     }

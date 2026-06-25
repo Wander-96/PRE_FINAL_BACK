@@ -1,0 +1,30 @@
+.feed-list-container {
+  width: 100%;
+  max-width: 680px; /* Constrain width for readability on large screens */
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.btn-load-more {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: 1px dashed var(--border-light);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-load-more:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+@media (max-width: 768px) {
+  .feed-list-container {
+    padding: 1rem;
+  }
+}

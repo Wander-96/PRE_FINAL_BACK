@@ -1,29 +1,18 @@
 import React, { useContext } from 'react'
 import { AuthContext } from '../../context/AuthContext'
-import { useNavigate } from 'react-router'
+import { FeedList } from '../../components/feed/FeedList/FeedList'
 
 export const HomeScreen = () => {
 
-  const {isLogged, logout, userData} = useContext(AuthContext)
-  console.log('El usuario con sesion activa actualmente es:',userData)
-  const navigate = useNavigate()
+  const { user } = useContext(AuthContext)
 
-
-
-  function handleLogout (){
-    logout()
-    navigate('/login')
+  if(!user){
+    return <h2>Cargando el muro de MIB...</h2>
   }
-  if(!userData){
-    return <h2>Cargando...</h2>
-  }
+  
   return (
-    <div>
-      
-      <h1>Bienvenido nuevamente {userData.nombre}</h1>
-      
-
-      <button onClick={handleLogout}>Cerrar sesion</button>
+    <div style={{ width: '100%' }}>
+      <FeedList />
     </div>
   )
 }

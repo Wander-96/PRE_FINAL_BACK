@@ -11,18 +11,18 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'mib_uploads', // Todas tus imágenes irán a esta carpeta en la nube
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'webm'],
+    resource_type: 'auto', // Permite que Cloudinary identifique si es video o imagen
   },
 });
 
 /* 
 Seguridad 2: Peso Máximo
-Inicializamos Multer con un límite de 5 Megabytes. 
-Si alguien intenta subir una foto de 100MB para saturar el servidor, Multer la rechazará.
+Inicializamos Multer con un límite de 100 Megabytes para permitir videos de hasta ~10 minutos. 
 */
 const uploadMiddleware = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } 
+    limits: { fileSize: 100 * 1024 * 1024 } 
 });
 
 export default uploadMiddleware;
