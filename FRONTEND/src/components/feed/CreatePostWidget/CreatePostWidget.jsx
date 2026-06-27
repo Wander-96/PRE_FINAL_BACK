@@ -110,13 +110,28 @@ export const CreatePostWidget = ({ onPostCreated }) => {
     }
   };
 
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=8b5cf6&color=fff`;
+  const userAvatarUrl = user?.avatar 
+      ? (user.avatar.startsWith('http') ? user.avatar : `${ENVIRONMENT.URL_API}/${user.avatar.replace(/\\/g, '/')}`)
+      : null;
+
   return (
     <div className="create-post-widget">
       {error && <div className="create-post-error" style={{color: '#EF4444', marginBottom: '1rem', fontSize: '0.85rem'}}>{error}</div>}
       <div className="create-post-header">
-        <div className="user-avatar-placeholder">
-           {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-        </div>
+        {userAvatarUrl ? (
+            <img 
+                src={userAvatarUrl} 
+                alt="Avatar" 
+                className="user-avatar-placeholder" 
+                style={{ padding: 0, objectFit: 'cover' }} 
+                onError={(e) => { e.target.src = fallbackAvatar; }} 
+            />
+        ) : (
+            <div className="user-avatar-placeholder">
+               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+            </div>
+        )}
         <textarea 
           placeholder="Share a new idea, riff or thought..." 
           value={content}
