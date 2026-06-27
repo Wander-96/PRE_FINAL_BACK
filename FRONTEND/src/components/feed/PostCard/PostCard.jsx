@@ -79,6 +79,11 @@ export const PostCard = ({ post, onPostDeleted }) => {
   
   const canEditPost = (Date.now() - new Date(post.createdAt).getTime()) <= 900000;
 
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=8b5cf6&color=fff`;
+  const authorAvatarUrl = author?.avatar 
+      ? (author.avatar.startsWith('http') ? author.avatar : `${ENVIRONMENT.URL_API}/${author.avatar.replace(/\\/g, '/')}`)
+      : null;
+
   // Función para convertir URLs en enlaces clickeables y extraer ID de YouTube
   const formatContentAndExtractYT = (text) => {
     if (!text) return { content: null, ytId: null };
@@ -264,9 +269,19 @@ export const PostCard = ({ post, onPostDeleted }) => {
   return (
     <div className="post-card">
       <div className="post-header">
-        <div className="user-avatar-placeholder">
-          {authorInitial}
-        </div>
+        {authorAvatarUrl ? (
+            <img 
+                src={authorAvatarUrl} 
+                alt="Avatar" 
+                className="user-avatar-placeholder" 
+                style={{ padding: 0, objectFit: 'cover' }} 
+                onError={(e) => { e.target.src = fallbackAvatar; }} 
+            />
+        ) : (
+            <div className="user-avatar-placeholder">
+                {authorInitial}
+            </div>
+        )}
         <div className="post-meta">
           <span className="post-author">{authorName}</span>
           <span className="post-time">{time}</span>

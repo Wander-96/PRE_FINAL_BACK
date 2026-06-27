@@ -5,7 +5,7 @@ import { Search, MessageSquare, Bell, User, LogOut, Music } from 'lucide-react';
 import './Navbar.css';
 
 export const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -24,7 +24,7 @@ export const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    logout();
+    logoutUser();
     navigate('/login');
   };
 

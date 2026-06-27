@@ -5,11 +5,11 @@ import { LayoutList, SlidersHorizontal, User } from 'lucide-react';
 import './Sidebar.css';
 
 export const Sidebar = () => {
-  const { logout } = useContext(AuthContext);
+  const { logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
+    logoutUser();
     navigate('/login');
   };
 

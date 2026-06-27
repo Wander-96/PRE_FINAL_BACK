@@ -35,7 +35,7 @@
     border-radius: 50%;
     border: 4px solid var(--bg-secondary);
     background-color: var(--bg-secondary);
-    overflow: hidden;
+    /* Se quitó overflow: hidden para que el botón no se corte */
     position: relative;
     z-index: 2;
     flex-shrink: 0;
@@ -45,12 +45,13 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 .btn-edit-avatar {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
+    bottom: 0px;
+    right: 0px;
     background-color: var(--accent-primary);
     color: white;
     border: none;
