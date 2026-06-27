@@ -3,6 +3,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import { toggleLike } from '../../../services/postService';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService';
 import { Heart, MessageCircle, Send, Edit2, Trash2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router';
 import { CommentText } from '../PostCard/PostCard'; // Will export this from PostCard
 import './PostDetailModal.css';
 
@@ -193,9 +194,9 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
                 {/* Sidebar Section (Right) */}
                 <div className="pdm-sidebar">
                     <div className="pdm-header">
-                        <div className="pdm-avatar">{authorInitial}</div>
+                        <Link to={`/profile/${author?._id}`} className="pdm-avatar" style={{ textDecoration: 'none', color: 'inherit' }}>{authorInitial}</Link>
                         <div className="pdm-meta">
-                            <span className="pdm-author">{authorName}</span>
+                            <Link to={`/profile/${author?._id}`} className="pdm-author" style={{ textDecoration: 'none', color: 'inherit' }}>{authorName}</Link>
                             <span className="pdm-time">{time}</span>
                         </div>
                     </div>
@@ -228,12 +229,12 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
                                     const canEditComment = (Date.now() - new Date(comment.createdAt).getTime()) <= 900000;
                                     return (
                                         <div key={comment._id} className="comment-item pdm-comment-item">
-                                            <div className="comment-avatar">
+                                            <Link to={`/profile/${comment.fk_id_user?._id}`} className="comment-avatar" style={{ textDecoration: 'none', color: 'inherit' }}>
                                                 {comment.fk_id_user?.name?.charAt(0).toUpperCase()}
-                                            </div>
+                                            </Link>
                                             <div className="comment-content">
                                                 <div className="comment-header">
-                                                    <span className="comment-author">{comment.fk_id_user?.name}</span>
+                                                    <Link to={`/profile/${comment.fk_id_user?._id}`} className="comment-author" style={{ textDecoration: 'none', color: 'inherit' }}>{comment.fk_id_user?.name}</Link>
                                                     <span className="comment-time">{new Date(comment.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                                 {editingCommentId === comment._id ? (

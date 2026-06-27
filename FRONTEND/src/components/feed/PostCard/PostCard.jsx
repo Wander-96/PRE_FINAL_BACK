@@ -3,6 +3,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import { toggleLike, deletePost, updatePost } from '../../../services/postService';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService';
 import { MoreVertical, Trash2, Heart, MessageCircle, Send, Edit2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router';
 import { PostDetailModal } from '../PostDetailModal/PostDetailModal';
 import './PostCard.css';
 
@@ -270,20 +271,22 @@ export const PostCard = ({ post, onPostDeleted }) => {
     <div className="post-card">
       <div className="post-header">
         {authorAvatarUrl ? (
-            <img 
-                src={authorAvatarUrl} 
-                alt="Avatar" 
-                className="user-avatar-placeholder" 
-                style={{ padding: 0, objectFit: 'cover' }} 
-                onError={(e) => { e.target.src = fallbackAvatar; }} 
-            />
+            <Link to={`/profile/${author?._id}`}>
+              <img 
+                  src={authorAvatarUrl} 
+                  alt="Avatar" 
+                  className="user-avatar-placeholder" 
+                  style={{ padding: 0, objectFit: 'cover' }} 
+                  onError={(e) => { e.target.src = fallbackAvatar; }} 
+              />
+            </Link>
         ) : (
-            <div className="user-avatar-placeholder">
+            <Link to={`/profile/${author?._id}`} className="user-avatar-placeholder" style={{ textDecoration: 'none', color: 'inherit' }}>
                 {authorInitial}
-            </div>
+            </Link>
         )}
         <div className="post-meta">
-          <span className="post-author">{authorName}</span>
+          <Link to={`/profile/${author?._id}`} className="post-author" style={{ textDecoration: 'none', color: 'inherit' }}>{authorName}</Link>
           <span className="post-time">{time}</span>
         </div>
         
@@ -401,12 +404,12 @@ export const PostCard = ({ post, onPostDeleted }) => {
                 const canEditComment = (Date.now() - new Date(comment.createdAt).getTime()) <= 900000;
                 return (
                 <div key={comment._id} className="comment-item">
-                  <div className="comment-avatar">
+                  <Link to={`/profile/${comment.fk_id_user?._id}`} className="comment-avatar" style={{ textDecoration: 'none', color: 'inherit' }}>
                     {comment.fk_id_user?.name?.charAt(0).toUpperCase()}
-                  </div>
+                  </Link>
                   <div className="comment-content">
                     <div className="comment-header">
-                      <span className="comment-author">{comment.fk_id_user?.name}</span>
+                      <Link to={`/profile/${comment.fk_id_user?._id}`} className="comment-author" style={{ textDecoration: 'none', color: 'inherit' }}>{comment.fk_id_user?.name}</Link>
                       <span className="comment-time">{new Date(comment.createdAt).toLocaleDateString()}</span>
                     </div>
                     {editingCommentId === comment._id ? (
