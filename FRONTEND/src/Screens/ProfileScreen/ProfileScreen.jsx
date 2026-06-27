@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { AuthContext } from '../../context/AuthContext';
 import { getPostsByUser } from '../../services/postService';
 import { CreatePostWidget } from '../../components/feed/CreatePostWidget/CreatePostWidget';
 import { PostCard } from '../../components/feed/PostCard/PostCard';
 import { PostDetailModal } from '../../components/feed/PostDetailModal/PostDetailModal';
-import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2 } from 'lucide-react';
+import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2, Search, Users, Camera } from 'lucide-react';
 import ENVIRONMENT from '../../config/environment';
 import './ProfileScreen.css';
 
@@ -49,6 +49,8 @@ export const ProfileScreen = () => {
     const [editingField, setEditingField] = useState(null);
     const [editValue, setEditValue] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const avatarInputRef = useRef(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMediaIndex, setModalMediaIndex] = useState(0);
@@ -144,6 +146,37 @@ export const ProfileScreen = () => {
         }
     };
 
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploadingAvatar(true);
+        try {
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            const response = await fetch(`${ENVIRONMENT.URL_API}/api/users/me`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Error al subir la imagen');
+
+            const updatedUser = { ...currentUser, ...data.data };
+            loginUser(token, updatedUser);
+            setProfileUser(updatedUser);
+        } catch (err) {
+            console.error('Error al subir avatar:', err);
+            // Podríamos setear un error global si lo deseas
+        } finally {
+            setIsUploadingAvatar(false);
+        }
+    };
+
     if (!profileUser) return <div className="loading-profile">Cargando perfil...</div>;
 
     // Avatar setup
@@ -183,7 +216,32 @@ export const ProfileScreen = () => {
 
                 <div className="profile-info-bar">
                     <div className="profile-avatar-wrapper">
-                        <img src={avatarUrl} alt="Avatar" className="profile-avatar-img" onError={(e) => { e.target.src = fallbackAvatar; }} />
+                        <img 
+                            src={avatarUrl} 
+                            alt="Avatar" 
+                            className="profile-avatar-img" 
+                            onError={(e) => { e.target.src = fallbackAvatar; }} 
+                            style={isUploadingAvatar ? { opacity: 0.5 } : {}}
+                        />
+                        {isOwnProfile && (
+                            <>
+                                <button 
+                                    className="btn-edit-avatar" 
+                                    onClick={() => avatarInputRef.current?.click()}
+                                    disabled={isUploadingAvatar}
+                                    title="Cambiar foto de perfil"
+                                >
+                                    <Camera size={20} />
+                                </button>
+                                <input 
+                                    type="file" 
+                                    ref={avatarInputRef}
+                                    onChange={handleAvatarChange}
+                                    accept="image/*" 
+                                    style={{ display: 'none' }} 
+                                />
+                            </>
+                        )}
                     </div>
                     
                     <div className="profile-name-section">

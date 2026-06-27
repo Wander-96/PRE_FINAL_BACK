@@ -47,6 +47,34 @@
     object-fit: cover;
 }
 
+.btn-edit-avatar {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-edit-avatar:hover {
+    transform: scale(1.1);
+    background-color: #6d28d9; /* un morado más oscuro o ajustar según el tema */
+}
+
+.btn-edit-avatar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .profile-name-section {
     margin-left: 24px;
     flex: 1;
