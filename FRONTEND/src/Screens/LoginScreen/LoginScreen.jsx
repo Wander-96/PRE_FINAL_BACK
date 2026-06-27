@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { AuthContext } from '../../context/AuthContext';
 import { login } from '../../services/authService';
 import { jwtDecode } from 'jwt-decode';
@@ -81,7 +81,7 @@ export const LoginScreen = () => {
                             <label className="remember-me">
                                 <input type="checkbox" /> Remember me
                             </label>
-                            <a href="#" className="forgot-password">Forgot password?</a>
+                            <Link to="/forgot-password" className="forgot-password">Forgot password?</Link>
                         </div>
 
                         <button

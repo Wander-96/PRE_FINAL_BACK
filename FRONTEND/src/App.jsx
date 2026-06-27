@@ -5,6 +5,7 @@ import { RegisterScreen } from './Screens/RegisterScreen/RegisterScreen'
 import { HomeScreen } from './Screens/HomeScreen/HomeScreen'
 import { ProfileSetupScreen } from './Screens/ProfileSetupScreen/ProfileSetupScreen'
 import { ProfileScreen } from './Screens/ProfileScreen/ProfileScreen'
+import { ForgotPasswordScreen } from './Screens/ForgotPasswordScreen/ForgotPasswordScreen'
 import { ResetPasswordScreen } from './Screens/ResetPasswordScreen/ResetPasswordScreen'
 import { AuthContextProvider } from './context/AuthContext'
 import AuthMiddleware from './middlewares/AuthMiddleware'
@@ -25,6 +26,10 @@ const App = () => {
           <Route
             path='/register'
             element={<RegisterScreen />}
+          />
+          <Route
+            path='/forgot-password'
+            element={<ForgotPasswordScreen />}
           />
           <Route
             path='/reset-password'
