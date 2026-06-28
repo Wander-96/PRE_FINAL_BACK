@@ -2,13 +2,19 @@ import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../../../context/AuthContext';
 import { Search, MessageSquare, Bell, User, LogOut, Music } from 'lucide-react';
+import { getMyNotifications, markAllAsRead } from '../../../services/notificationService';
+import { NotificationItem } from '../../notifications/NotificationItem';
 import './Navbar.css';
 
 export const Navbar = () => {
   const { user, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
+  const notifRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -16,12 +22,60 @@ export const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const fetchNotifications = async () => {
+    try {
+      const data = await getMyNotifications();
+      if (data.ok) {
+        setNotifications(data.data.notifications);
+        setUnreadCount(data.data.unreadCount);
+      }
+    } catch (err) {
+      console.error("Error fetching notifications", err);
+    }
+  };
+
+  const handleNotifToggle = async () => {
+    const newState = !isNotifOpen;
+    setIsNotifOpen(newState);
+    
+    // Mark as read when opening
+    if (newState && unreadCount > 0) {
+      try {
+        await markAllAsRead();
+        setUnreadCount(0);
+        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      } catch (err) {
+        console.error("Error marking notifications as read", err);
+      }
+    }
+  };
+
+  const handleNotificationClick = (notification) => {
+    setIsNotifOpen(false);
+    if (notification.type === 'LIKE' || notification.type === 'COMMENT') {
+       // Por ahora redirigimos al perfil del autor o al inicio, idealmente a SinglePostScreen.
+       // Asumiendo que el post está en el feed, podemos redirigir al feed:
+       navigate('/home');
+    } else if (notification.type === 'PROJECT_INVITATION') {
+       navigate('/projects');
+    }
+  };
 
   const handleLogout = () => {
     logoutUser();
@@ -51,9 +105,39 @@ export const Navbar = () => {
         <button className="icon-btn" aria-label="Messages">
           <MessageSquare size={20} />
         </button>
-        <button className="icon-btn" aria-label="Notifications">
-          <Bell size={20} />
-        </button>
+        <div className="notification-menu-container" ref={notifRef}>
+          <button className="icon-btn" aria-label="Notifications" onClick={handleNotifToggle}>
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+          
+          {isNotifOpen && (
+            <div className="notification-dropdown">
+              <div className="notification-header">
+                <h4>Notificaciones</h4>
+              </div>
+              <div className="notification-list">
+                {notifications.length > 0 ? (
+                  notifications.map(notif => (
+                    <NotificationItem 
+                      key={notif._id} 
+                      notification={notif} 
+                      onClick={handleNotificationClick} 
+                    />
+                  ))
+                ) : (
+                  <div className="notification-empty">
+                    <p>Aún no hay notificaciones</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="profile-menu-container" ref={dropdownRef}>
           <button 

@@ -1,7 +1,7 @@
 import commentRepository from '../repositories/comment.repository.js'
 import postRepository from '../repositories/post.repository.js'
 import { getIo } from '../config/socket.config.js'
-
+import notificationRepository from '../repositories/notification.repository.js'
 class CommentService {
     async createComment(commentData, userId) {
         // Validación de existencia del post
@@ -17,15 +17,24 @@ class CommentService {
         post.commentsCount += 1
         await post.save()
 
-        // Emisión de Notificación WebSocket
+        // Emisión de Notificación WebSocket y Persistencia
         const io = getIo();
-        if (io && post.fk_id_user.toString() !== userId.toString()) {
-            io.to(post.fk_id_user.toString()).emit('new_notification', {
+        if (post.fk_id_user.toString() !== userId.toString()) {
+            await notificationRepository.create({
+                recipient: post.fk_id_user,
+                sender: userId,
                 type: 'COMMENT',
-                message: '¡Alguien ha comentado tu publicación!',
-                post_id: post._id,
-                date: new Date()
+                related_entity: post._id
             });
+
+            if (io) {
+                io.to(post.fk_id_user.toString()).emit('new_notification', {
+                    type: 'COMMENT',
+                    message: '¡Alguien ha comentado tu publicación!',
+                    post_id: post._id,
+                    date: new Date()
+                });
+            }
         }
 
         return newComment

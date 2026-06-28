@@ -6,6 +6,8 @@ import projectMemberRepository from "../repositories/projectMember.repository.js
 import projectInvitationRepository from "../repositories/projectInvitation.repository.js";
 import jwt from 'jsonwebtoken';
 import mailService from "./mail.service.js";
+import { getIo } from '../config/socket.config.js';
+import notificationRepository from '../repositories/notification.repository.js';
 
 class MemberProjectService {
 
@@ -60,6 +62,25 @@ class MemberProjectService {
         const reject_url = `${ENVIRONMENT.URL_BACKEND}/api/project/${project_id}/members/${MEMBER_INVITATION_STATUS.REJECTED}?token=${invitation_token}`;
 
         await mailService.sendInvitationEmail(user_invited_email, accept_url, reject_url, role);
+
+        // Guardar notificación en la BD
+        await notificationRepository.create({
+            recipient: userToInvite._id,
+            sender: user_invited_by_id,
+            type: 'PROJECT_INVITATION',
+            related_entity: project_id
+        });
+
+        // WebSocket Emisión
+        const io = getIo();
+        if (io) {
+            io.to(userToInvite._id.toString()).emit('new_notification', {
+                type: 'PROJECT_INVITATION',
+                message: '¡Has sido invitado a un proyecto musical!',
+                project_id: project_id,
+                date: new Date()
+            });
+        }
     }
 
     async processInvitation(invitation_token, decision) {
