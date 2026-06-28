@@ -165,6 +165,7 @@ class AuthController {
                 name: user_found.name,
                 email: user_found.email,
                 id: user_found._id,
+                avatar: user_found.avatar,
                 created_at: user_found.created_at,
                 is_profile_complete: user_found.is_profile_complete
             }
