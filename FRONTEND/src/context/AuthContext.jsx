@@ -1,4 +1,5 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import { connectSocket, disconnectSocket } from "../config/socket";
 
 export const AuthContext = createContext();
 
@@ -20,6 +21,16 @@ export const AuthContextProvider = ({ children }) => {
     
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
+    // Conectar socket automáticamente si hay token al cargar
+    useEffect(() => {
+        if (token) {
+            connectSocket();
+        }
+        return () => {
+            // No desconectar aquí a menos que el usuario cierre sesión
+        };
+    }, [token]);
+
     const loginUser = (newToken, userData) => {
         setToken(newToken);
         setUser(userData);
@@ -36,6 +47,7 @@ export const AuthContextProvider = ({ children }) => {
         
         localStorage.removeItem('access_token');
         localStorage.removeItem('user');
+        disconnectSocket();
     };
 
     return (

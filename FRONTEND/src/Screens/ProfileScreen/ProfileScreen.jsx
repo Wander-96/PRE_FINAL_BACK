@@ -5,7 +5,8 @@ import { getPostsByUser } from '../../services/postService';
 import { CreatePostWidget } from '../../components/feed/CreatePostWidget/CreatePostWidget';
 import { PostCard } from '../../components/feed/PostCard/PostCard';
 import { PostDetailModal } from '../../components/feed/PostDetailModal/PostDetailModal';
-import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2, Search, Users, Camera } from 'lucide-react';
+import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2, Search, Users, Camera, MessageCircle } from 'lucide-react';
+import { createOrGetConversation } from '../../services/messageService';
 import ENVIRONMENT from '../../config/environment';
 import './ProfileScreen.css';
 
@@ -146,6 +147,16 @@ export const ProfileScreen = () => {
         }
     };
 
+    const handleStartChat = async () => {
+        try {
+            await createOrGetConversation(profileUser._id);
+            alert('¡Chat creado con éxito! Puedes buscar la conversación en el mensajero flotante abajo a la derecha.');
+        } catch (error) {
+            console.error('Error al iniciar chat:', error);
+            alert('No se pudo iniciar el chat.');
+        }
+    };
+
     const handleAvatarChange = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -281,7 +292,12 @@ export const ProfileScreen = () => {
                                 <Edit2 size={16} /> Editar perfil
                             </button>
                         ) : (
-                            <button className="btn-connect">Conectar</button>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button className="btn-connect">Conectar</button>
+                                <button className="btn-connect" onClick={handleStartChat} style={{ backgroundColor: 'var(--primary-color, #8b5cf6)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <MessageCircle size={16} /> Mensaje
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>

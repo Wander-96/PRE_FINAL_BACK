@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router';
 import { Navbar } from '../Navbar/Navbar';
 import { Sidebar } from '../Sidebar/Sidebar';
+import { FloatingMessenger } from '../../messenger/FloatingMessenger';
 import './MainLayout.css';
 
 export const MainLayout = () => {
@@ -14,6 +15,7 @@ export const MainLayout = () => {
           <Outlet />
         </main>
       </div>
+      <FloatingMessenger />
     </div>
   );
 };

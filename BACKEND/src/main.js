@@ -12,6 +12,7 @@ import searchRouter from "./routes/search.router.js";
 import commentRouter from "./routes/comment.router.js";
 import feedRouter from "./routes/feed.router.js";
 import notificationRouter from "./routes/notification.router.js";
+import messageRouter from "./routes/message.route.js";
 
 // Configuración de DNS para desarrollo local
 import dns from 'dns';
@@ -43,6 +44,7 @@ app.use('/api/search', searchRouter);
 app.use('/api/comments', commentRouter);
 app.use('/api/feed', feedRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/messages', messageRouter);
 
 // Middleware Global de Manejo de Errores
 app.use((err, req, res, next) => {
