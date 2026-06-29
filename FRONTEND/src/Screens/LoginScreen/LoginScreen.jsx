@@ -1,8 +1,7 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import { AuthContext } from '../../context/AuthContext';
 import { login } from '../../services/authService';
-import { jwtDecode } from 'jwt-decode';
 import loginVideo from '../../assets/login_animated_background.mp4';
 import loginWave from '../../assets/login_wave.png';
 import './LoginScreen.css';
@@ -20,19 +19,16 @@ export const LoginScreen = () => {
         e.preventDefault();
         setError(null);
         setIsLoading(true);
+
         try {
+            // Llamamos al servicio (que apunta a nuestro Backend)
             const response = await login(email, password);
-            
-            const token = response.data.access_token;
-            const decodedUser = jwtDecode(token);
 
-            loginUser(token, decodedUser);
+            // Si funciona, guardamos el token y la info en el Context (cerebro)
+            loginUser(response.token, response.user);
 
-            if (decodedUser.is_profile_complete === false) {
-                navigate('/setup-profile');
-            } else {
-                navigate('/home');
-            }
+            // Redirigimos al muro
+            navigate('/home');
         } catch (err) {
             setError(err.message || 'Error al iniciar sesión');
         } finally {
@@ -42,9 +38,17 @@ export const LoginScreen = () => {
 
     return (
         <div className="login-container">
+            {/* Fondo de video a pantalla completa */}
             <video src={loginVideo} poster={loginWave} className="login-video-bg" autoPlay loop muted playsInline />
 
+
+
+            {/* EL LOGO VIENE AQUI!!!!! */}
+
+
+            {/* Caja modal central (Glassmorphism flotante) */}
             <div className="login-modal">
+                {/* Lado Derecho: Formulario */}
                 <div className="login-form-side">
                     <div className="login-header">
                         <h1>Welcome back to MIB</h1>
@@ -81,7 +85,7 @@ export const LoginScreen = () => {
                             <label className="remember-me">
                                 <input type="checkbox" /> Remember me
                             </label>
-                            <Link to="/forgot-password" className="forgot-password">Forgot password?</Link>
+                            <a href="#" className="forgot-password">Forgot password?</a>
                         </div>
 
                         <button
@@ -93,15 +97,15 @@ export const LoginScreen = () => {
                         </button>
 
                         <div className="social-login-container">
-                            <button type="button" className="btn-social" onClick={() => alert('Próximamente: Iniciar sesión con Google')}>
+                            <button type="button" className="btn-social">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.761H12.545z" />
                                 </svg>
                                 Continue with Google
                             </button>
-                            <button type="button" className="btn-social" onClick={() => alert('Próximamente: Iniciar sesión con Apple')}>
-                                <svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                            <button type="button" className="btn-social">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.365,21.439c-1.396,1.405-2.529,1.49-3.906,0.762c-1.425-0.75-2.909-0.742-4.305-0.006c-1.312,0.686-2.476,0.654-3.793-0.756C-1.895,11.53,1.939,1.155,9.255,2.152c1.789,0.24,3.284,1.171,4.24,1.171c0.976,0,2.697-1.127,4.821-0.963c1.791,0.076,3.41,0.744,4.421,2.228c-3.842,2.215-3.218,7.397,0.56,8.871C22.253,16.294,18.826,23.865,16.365,21.439z M14.675,6.671c-0.276-2.518,1.91-4.733,4.408-5.008C19.467,4.321,17.168,6.861,14.675,6.671z" />
                                 </svg>
                                 Continue with Apple
                             </button>
