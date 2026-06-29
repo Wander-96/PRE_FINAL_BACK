@@ -7,6 +7,7 @@ import { PostCard } from '../../components/feed/PostCard/PostCard.jsx';
 import { PostDetailModal } from '../../components/feed/PostDetailModal/PostDetailModal.jsx';
 import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2, Search, Users, Camera, MessageCircle } from 'lucide-react';
 import { createOrGetConversation } from '../../services/messageService.js';
+import { sendConnectionRequest, acceptConnectionRequest, removeConnection, getUserConnections, getConnectionStatus as getConnStatus } from '../../services/connectionService.js';
 import ENVIRONMENT from '../../config/environment.js';
 import './ProfileScreen.css';
 
@@ -45,6 +46,12 @@ export const ProfileScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [profileUser, setProfileUser] = useState(null); 
+    
+    // Connection States
+    const [connStatus, setConnStatus] = useState('none'); // 'none', 'pending', 'accepted', 'self'
+    const [connData, setConnData] = useState(null);
+    const [connectionsList, setConnectionsList] = useState([]);
+    const [isConnLoading, setIsConnLoading] = useState(false); 
 
     // Inline Editing States
     const [editingField, setEditingField] = useState(null);
@@ -89,8 +96,23 @@ export const ProfileScreen = () => {
         }
     };
 
+    const fetchConnectionData = async () => {
+        if (!targetUserId || !currentUser) return;
+        try {
+            const statusRes = await getConnStatus(targetUserId);
+            setConnStatus(statusRes.status);
+            setConnData(statusRes);
+
+            const listRes = await getUserConnections(targetUserId);
+            setConnectionsList(listRes || []);
+        } catch (err) {
+            console.error("Error al obtener conexiones:", err);
+        }
+    };
+
     useEffect(() => {
         fetchUserPosts();
+        fetchConnectionData();
     }, [targetUserId]);
 
     const handlePostCreated = (newPost) => {
@@ -154,6 +176,35 @@ export const ProfileScreen = () => {
         } catch (error) {
             console.error('Error al iniciar chat:', error);
             alert('No se pudo iniciar el chat.');
+        }
+    };
+
+    const handleConnectionAction = async () => {
+        if (isConnLoading || !targetUserId) return;
+        setIsConnLoading(true);
+        try {
+            if (connStatus === 'none') {
+                await sendConnectionRequest(targetUserId);
+                setConnStatus('pending');
+                setConnData({ isRequester: true });
+            } else if (connStatus === 'pending' && !connData?.isRequester && connData?.connectionId) {
+                await acceptConnectionRequest(connData.connectionId);
+                setConnStatus('accepted');
+                fetchConnectionData(); // Refresh list
+            } else if (connData?.connectionId) {
+                // Cancel pending request or remove connection
+                if (window.confirm("¿Seguro que quieres eliminar esta conexión/solicitud?")) {
+                    await removeConnection(connData.connectionId);
+                    setConnStatus('none');
+                    setConnData(null);
+                    fetchConnectionData();
+                }
+            }
+        } catch (error) {
+            console.error("Error en acción de conexión:", error);
+            alert("No se pudo realizar la acción.");
+        } finally {
+            setIsConnLoading(false);
         }
     };
 
@@ -282,7 +333,7 @@ export const ProfileScreen = () => {
                                     </a>
                                 )}
                             </div>
-                            <span className="connections-count">0 conexiones</span>
+                            <span className="connections-count">{connectionsList.length} conexiones</span>
                         </div>
                     </div>
 
@@ -293,7 +344,26 @@ export const ProfileScreen = () => {
                             </button>
                         ) : (
                             <div style={{ display: 'flex', gap: '10px' }}>
-                                <button className="btn-connect">Conectar</button>
+                                {connStatus === 'none' && (
+                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading}>
+                                        Conectar
+                                    </button>
+                                )}
+                                {connStatus === 'pending' && connData?.isRequester && (
+                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#555' }}>
+                                        Pendiente
+                                    </button>
+                                )}
+                                {connStatus === 'pending' && !connData?.isRequester && (
+                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#10b981' }}>
+                                        Aceptar Solicitud
+                                    </button>
+                                )}
+                                {connStatus === 'accepted' && (
+                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#ef4444' }}>
+                                        Desconectar
+                                    </button>
+                                )}
                                 <button className="btn-connect" onClick={handleStartChat} style={{ backgroundColor: 'var(--primary-color, #8b5cf6)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <MessageCircle size={16} /> Mensaje
                                 </button>
@@ -324,17 +394,24 @@ export const ProfileScreen = () => {
                                 <h3>Conexiones</h3>
                                 <button className="btn-text" onClick={() => setActiveTab('Conexiones')}>Ver todas las conexiones</button>
                             </div>
-                            <p className="subtext">0 conexiones</p>
+                            <p className="subtext">{connectionsList.length} conexiones</p>
                             
-                            {dummyConnections.length > 0 && (
+                            {connectionsList.length > 0 ? (
                                 <div className="connections-grid">
-                                    {dummyConnections.map(conn => (
-                                        <div key={conn.id} className="connection-item">
-                                            <img src={conn.avatar} alt={conn.name} />
+                                    {connectionsList.map(conn => (
+                                        <div 
+                                            key={conn.connectionId} 
+                                            className="connection-item"
+                                            onClick={() => navigate(`/profile/${conn._id}`)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            <img src={conn.avatar ? (conn.avatar.startsWith('http') ? conn.avatar : `${ENVIRONMENT.URL_API}/${conn.avatar.replace(/\\/g, '/')}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(conn.name)}&background=8b5cf6&color=fff`} alt={conn.name} />
                                             <span className="connection-name">{conn.name}</span>
                                         </div>
                                     ))}
                                 </div>
+                            ) : (
+                                <p style={{ color: '#888', marginTop: '16px', fontSize: '0.9rem' }}>Aún no hay conexiones.</p>
                             )}
                         </div>
                     </div>

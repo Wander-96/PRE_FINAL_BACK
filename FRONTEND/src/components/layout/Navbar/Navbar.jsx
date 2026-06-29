@@ -4,6 +4,7 @@ import { AuthContext } from '../../../context/AuthContext.jsx';
 import { Search, MessageSquare, Bell, User, LogOut, Music } from 'lucide-react';
 import { getMyNotifications, markAllAsRead } from '../../../services/notificationService.js';
 import { NotificationItem } from '../../notifications/NotificationItem.jsx';
+import logoMib from '../../../assets/logo_mib.png';
 import './Navbar.css';
 
 export const Navbar = () => {
@@ -89,9 +90,8 @@ export const Navbar = () => {
 
   return (
     <header className="top-navbar">
-      <div className="navbar-left">
-        <Music className="navbar-logo-icon" size={24} color="#8b5cf6" />
-        <span className="navbar-logo-text">MIB</span>
+      <div className="navbar-left" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
+        <img src={logoMib} alt="MIB Logo" className="navbar-logo-img" style={{ height: '40px', width: 'auto' }} />
       </div>
 
       <div className="navbar-center">
