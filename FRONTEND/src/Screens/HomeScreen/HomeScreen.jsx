@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
-import { AuthContext } from '../../context/AuthContext'
-import { FeedList } from '../../components/feed/FeedList/FeedList'
+import { AuthContext } from '../../context/AuthContext.jsx'
+import { FeedList } from '../../components/feed/FeedList/FeedList.jsx'
 
 export const HomeScreen = () => {
 

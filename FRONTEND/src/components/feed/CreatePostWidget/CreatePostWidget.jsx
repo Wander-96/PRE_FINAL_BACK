@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { createPost } from '../../../services/postService.js';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 import { Paperclip, Image as ImageIcon, Video, MapPin, X } from 'lucide-react';
 import { LocationAutocomplete } from '../LocationAutocomplete/LocationAutocomplete.jsx';
 import './CreatePostWidget.css';

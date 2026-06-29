@@ -1,9 +1,9 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 import { Search, MessageSquare, Bell, User, LogOut, Music } from 'lucide-react';
-import { getMyNotifications, markAllAsRead } from '../../../services/notificationService';
-import { NotificationItem } from '../../notifications/NotificationItem';
+import { getMyNotifications, markAllAsRead } from '../../../services/notificationService.js';
+import { NotificationItem } from '../../notifications/NotificationItem.jsx';
 import './Navbar.css';
 
 export const Navbar = () => {
@@ -102,7 +102,7 @@ export const Navbar = () => {
       </div>
 
       <div className="navbar-right">
-        <button className="icon-btn" aria-label="Messages">
+        <button className="icon-btn" aria-label="Messages" onClick={() => window.dispatchEvent(new CustomEvent('toggle_messenger'))}>
           <MessageSquare size={20} />
         </button>
         <div className="notification-menu-container" ref={notifRef}>

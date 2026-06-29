@@ -1,4 +1,4 @@
-import ENVIRONMENT from '../config/environment';
+import ENVIRONMENT from '../config/environment.js';
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem('access_token');

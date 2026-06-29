@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
-import { forgotPassword } from '../../services/authService';
+import { forgotPassword } from '../../services/authService.js';
 import '../LoginScreen/LoginScreen.css'; // Reutilizamos los estilos del login
 
 export const ForgotPasswordScreen = () => {

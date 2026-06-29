@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, MessageSquare, UserPlus } from 'lucide-react';
 import './NotificationItem.css';
-import ENVIRONMENT from '../../config/environment';
+import ENVIRONMENT from '../../config/environment.js';
 
 export const NotificationItem = ({ notification, onClick }) => {
     const { sender, type, is_read, created_at } = notification;

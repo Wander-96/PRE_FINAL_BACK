@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router';
-import { AuthContext } from '../../context/AuthContext';
-import { login } from '../../services/authService';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { login } from '../../services/authService.js';
 import loginVideo from '../../assets/login_animated_background.mp4';
 import loginWave from '../../assets/login_wave.png';
 import './LoginScreen.css';

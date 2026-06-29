@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { AuthContext } from '../../context/AuthContext';
-import { getPostsByUser } from '../../services/postService';
-import { CreatePostWidget } from '../../components/feed/CreatePostWidget/CreatePostWidget';
-import { PostCard } from '../../components/feed/PostCard/PostCard';
-import { PostDetailModal } from '../../components/feed/PostDetailModal/PostDetailModal';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { getPostsByUser } from '../../services/postService.js';
+import { CreatePostWidget } from '../../components/feed/CreatePostWidget/CreatePostWidget.jsx';
+import { PostCard } from '../../components/feed/PostCard/PostCard.jsx';
+import { PostDetailModal } from '../../components/feed/PostDetailModal/PostDetailModal.jsx';
 import { MapPin, Briefcase, Info, Link2, Music, Headphones, Globe, Calendar, Edit2, Search, Users, Camera, MessageCircle } from 'lucide-react';
-import { createOrGetConversation } from '../../services/messageService';
-import ENVIRONMENT from '../../config/environment';
+import { createOrGetConversation } from '../../services/messageService.js';
+import ENVIRONMENT from '../../config/environment.js';
 import './ProfileScreen.css';
 
 // SVG Icons
@@ -371,7 +371,7 @@ export const ProfileScreen = () => {
                                         <PostCard 
                                             key={post._id} 
                                             post={post} 
-                                            onPostDeleted={handlePostDeleted}
+                                            onPostDeleted={(id) => setPosts(prev => prev.filter(p => p._id !== id))}
                                             onPostUpdated={handlePostUpdated}
                                         />
                                     ))

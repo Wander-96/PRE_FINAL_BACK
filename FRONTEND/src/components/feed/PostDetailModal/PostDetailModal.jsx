@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
-import { toggleLike } from '../../../services/postService';
-import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService';
+import { AuthContext } from '../../../context/AuthContext.jsx';
+import { toggleLike } from '../../../services/postService.js';
+import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService.js';
 import { Heart, MessageCircle, Send, Edit2, Trash2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
-import { CommentText } from '../PostCard/PostCard'; // Will export this from PostCard
+import { CommentText } from '../PostCard/PostCard.jsx'; // Will export this from PostCard
 import './PostDetailModal.css';
 
 export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClose, onUpdatePost }) => {

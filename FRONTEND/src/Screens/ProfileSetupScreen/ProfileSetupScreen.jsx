@@ -1,9 +1,9 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { AuthContext } from '../../context/AuthContext';
-import { LocationAutocomplete } from '../../components/feed/LocationAutocomplete/LocationAutocomplete';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { LocationAutocomplete } from '../../components/feed/LocationAutocomplete/LocationAutocomplete.jsx';
 import { Camera, Globe, Music, Headphones } from 'lucide-react';
-import ENVIRONMENT from '../../config/environment';
+import ENVIRONMENT from '../../config/environment.js';
 import loginVideo from '../../assets/login_animated_background.mp4';
 import loginWave from '../../assets/login_wave.png';
 import './ProfileSetupScreen.css';

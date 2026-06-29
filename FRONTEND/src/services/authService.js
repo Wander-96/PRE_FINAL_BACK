@@ -1,4 +1,4 @@
-import ENVIRONMENT from '../config/environment'
+import ENVIRONMENT from '../config/environment.js'
 export async function login(email, password) {
     const response_http = await fetch(
         ENVIRONMENT.URL_API + '/api/auth/login', {

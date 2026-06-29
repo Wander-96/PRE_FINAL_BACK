@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MessageCircle, X, ChevronDown, Send } from 'lucide-react';
-import { AuthContext } from '../../context/AuthContext';
-import { getSocket } from '../../config/socket';
-import { getConversations, getMessages, createOrGetConversation } from '../../services/messageService';
-import ENVIRONMENT from '../../config/environment';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { getSocket } from '../../config/socket.js';
+import { getConversations, getMessages, createOrGetConversation } from '../../services/messageService.js';
+import ENVIRONMENT from '../../config/environment.js';
 import './FloatingMessenger.css';
 
 export const FloatingMessenger = () => {
@@ -23,6 +23,13 @@ export const FloatingMessenger = () => {
             fetchConversations();
         }
     }, [isOpen, user]);
+
+    // Escuchar evento global desde Navbar
+    useEffect(() => {
+        const handleToggle = () => setIsOpen(prev => !prev);
+        window.addEventListener('toggle_messenger', handleToggle);
+        return () => window.removeEventListener('toggle_messenger', handleToggle);
+    }, []);
 
     // Setup socket listeners
     useEffect(() => {
@@ -81,7 +88,7 @@ export const FloatingMessenger = () => {
     };
 
     const handleSendMessage = (e) => {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
         if (!newMessage.trim() || !activeChat || !socket) return;
 
         // Identificar al receptor
@@ -146,13 +153,19 @@ export const FloatingMessenger = () => {
                     </div>
 
                     <form className="chat-bubble-input-area" onSubmit={handleSendMessage}>
-                        <input 
-                            type="text" 
+                        <textarea 
                             placeholder="Escribe un mensaje..." 
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSendMessage(e);
+                                }
+                            }}
+                            rows={1}
                         />
-                        <button type="submit" disabled={!newMessage.trim()}>
+                        <button type="submit" disabled={!newMessage.trim()} onClick={handleSendMessage}>
                             <Send size={18} />
                         </button>
                     </form>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { resetPassword } from '../../services/authService';
+import { resetPassword } from '../../services/authService.js';
 import '../LoginScreen/LoginScreen.css';
 
 export const ResetPasswordScreen = () => {

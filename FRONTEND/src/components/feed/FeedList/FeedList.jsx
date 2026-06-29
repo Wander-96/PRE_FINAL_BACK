@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { CreatePostWidget } from '../CreatePostWidget/CreatePostWidget';
-import { PostCard } from '../PostCard/PostCard';
+import { CreatePostWidget } from '../CreatePostWidget/CreatePostWidget.jsx';
+import { PostCard } from '../PostCard/PostCard.jsx';
 import { getFeed } from '../../../services/postService.js';
 import './FeedList.css';
 
@@ -44,7 +44,11 @@ export const FeedList = () => {
       )}
 
       {posts.map(post => (
-        <PostCard key={post._id} post={post} />
+        <PostCard 
+          key={post._id} 
+          post={post} 
+          onPostDeleted={(id) => setPosts(prev => prev.filter(p => p._id !== id))} 
+        />
       ))}
       
       {!loading && posts.length > 0 && (

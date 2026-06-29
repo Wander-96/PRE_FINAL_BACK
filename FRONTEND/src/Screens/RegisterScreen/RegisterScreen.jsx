@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { register } from '../../services/authService';
+import { register } from '../../services/authService.js';
 import loginVideo from '../../assets/login_animated_background.mp4';
 import loginWave from '../../assets/login_wave.png';
 import '../LoginScreen/LoginScreen.css';

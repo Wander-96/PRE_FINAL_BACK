@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext.jsx';
 import { LayoutList, SlidersHorizontal, User } from 'lucide-react';
 import './Sidebar.css';
 
