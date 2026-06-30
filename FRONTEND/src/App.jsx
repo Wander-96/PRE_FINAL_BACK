@@ -11,7 +11,6 @@ import { AuthContextProvider } from './context/AuthContext.jsx'
 import AuthMiddleware from './middlewares/AuthMiddleware.jsx'
 import AlreadyAuthMiddleware from './middlewares/AlreadyAuthMiddleware.jsx'
 import { MainLayout } from './components/layout/MainLayout/MainLayout.jsx'
-import { MessagesScreen } from './Screens/MessagesScreen/MessagesScreen.jsx'
 
 
 const App = () => {
@@ -60,7 +59,7 @@ const App = () => {
             
             <Route path='/profile' element={<ProfileScreen />} />
             <Route path='/profile/:userId' element={<ProfileScreen />} />
-            <Route path='/messages' element={<MessagesScreen />} />
+            <Route path='/messages' element={<h2>Messages (En construcción)</h2>} />
           </Route>
         </Route>
 
