@@ -184,7 +184,10 @@ class AuthController {
                 ok: true,
                 status: 200,
                 message: 'Usuario autentificado exitosamente',
-                data: { access_token }
+                data: { 
+                    access_token,
+                    user_info: profile_info
+                }
             })
         }
         catch (error) {

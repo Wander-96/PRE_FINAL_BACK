@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ArrowLeft, Send, MessageCircle } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext.jsx';
-import { getSocket } from '../../config/socket.js';
 import { getConversations, getMessages } from '../../services/messageService.js';
 import ENVIRONMENT from '../../config/environment.js';
 import './MessagesScreen.css';
 
 export const MessagesScreen = () => {
-    const { user } = useContext(AuthContext);
+    const { user, activeSocket: socket } = useContext(AuthContext);
     const [conversations, setConversations] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -15,7 +14,6 @@ export const MessagesScreen = () => {
     const [loading, setLoading] = useState(false);
     
     const messagesEndRef = useRef(null);
-    const socket = getSocket();
 
     useEffect(() => {
         if (user) {

@@ -18,8 +18,9 @@ export const AuthContextProvider = ({ children }) => {
 
     let storedToken = localStorage.getItem('access_token');
     
-    // Parche de seguridad: si el token se guardó corrupto (como el string 'undefined'), limpiarlo
-    if (storedToken === 'undefined') {
+    // Parche de seguridad (Escudo Anti-Softlock):
+    // Si el token se guardó corrupto ('undefined') o si existe un token pero NO hay usuario guardado
+    if (storedToken === 'undefined' || (storedToken && !initialUser)) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('user');
         storedToken = null;
@@ -30,11 +31,13 @@ export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(initialUser);
     
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);
+    const [activeSocket, setActiveSocket] = useState(null);
 
     // Conectar socket automáticamente si hay token al cargar
     useEffect(() => {
         if (token) {
-            connectSocket();
+            const s = connectSocket();
+            setActiveSocket(s);
         }
         return () => {
             // No desconectar aquí a menos que el usuario cierre sesión
@@ -61,7 +64,7 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, user, isAuthenticated, loginUser, logoutUser }}>
+        <AuthContext.Provider value={{ token, user, isAuthenticated, loginUser, logoutUser, activeSocket }}>
             {children}
         </AuthContext.Provider>
     );
