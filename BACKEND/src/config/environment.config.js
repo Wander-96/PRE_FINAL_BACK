@@ -21,7 +21,8 @@ const ENVIRONMENT = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    BREVO_API_KEY: process.env.BREVO_API_KEY
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    URL_FRONTEND: process.env.URL_FRONTEND || 'http://localhost:5173'
 }
 
 // Lo exportamos para usarlo en cualquier lugar del proyecto

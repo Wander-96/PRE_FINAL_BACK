@@ -126,24 +126,24 @@ class AuthController {
             // Actualización de estado
             await userRepository.updateById(user._id, { email_verified: true });
 
-            return res.status(200).json({
-                ok: true,
-                status: 200,
-                message: "Email verificado correctamente. ¡Ya puedes usar tu cuenta!"
-            });
+            // Redirigir al frontend de forma exitosa
+            return res.redirect(`${ENVIRONMENT.URL_FRONTEND}/login?verified=true`);
 
         }
         catch (error) {
             // Manejo de excepciones JWT
             if (error instanceof jwt.JsonWebTokenError || error instanceof jwt.NotBeforeError || error instanceof jwt.TokenExpiredError) {
-                return res.status(401).json({ message: "Token invalido", ok: false, status: 401 })
+                return res.redirect(`${ENVIRONMENT.URL_FRONTEND}/login?error=token_invalido`);
             }
             else if (error instanceof ServerError) {
-                return res.status(error.status).json({ message: error.message, ok: false, status: error.status })
+                if (error.message === "Este email ya ha sido verificado") {
+                    return res.redirect(`${ENVIRONMENT.URL_FRONTEND}/login?verified=already`);
+                }
+                return res.redirect(`${ENVIRONMENT.URL_FRONTEND}/login?error=server_error`);
             }
             else {
-                console.error('Error critico:', error);
-                return res.status(500).json({ message: "Error interno del servidor", ok: false, status: 500 });
+                console.error('Error critico en verificación:', error);
+                return res.redirect(`${ENVIRONMENT.URL_FRONTEND}/login?error=unknown`);
             }
         }
     }
