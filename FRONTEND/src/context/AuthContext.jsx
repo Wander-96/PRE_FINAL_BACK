@@ -16,7 +16,17 @@ export const AuthContextProvider = ({ children }) => {
         console.error("Error leyendo user de localStorage", e);
     }
 
-    const [token, setToken] = useState(localStorage.getItem('access_token'));
+    let storedToken = localStorage.getItem('access_token');
+    
+    // Parche de seguridad: si el token se guardó corrupto (como el string 'undefined'), limpiarlo
+    if (storedToken === 'undefined') {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        storedToken = null;
+        initialUser = null;
+    }
+
+    const [token, setToken] = useState(storedToken);
     const [user, setUser] = useState(initialUser);
     
     const [isAuthenticated, setIsAuthenticated] = useState(!!token);

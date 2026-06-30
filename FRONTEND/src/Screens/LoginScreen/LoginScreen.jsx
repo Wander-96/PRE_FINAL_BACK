@@ -24,8 +24,12 @@ export const LoginScreen = () => {
             // Llamamos al servicio (que apunta a nuestro Backend)
             const response = await login(email, password);
 
+            // Extraemos los datos del formato correcto de la API
+            const token = response.data.access_token;
+            const userData = response.data.user_info;
+
             // Si funciona, guardamos el token y la info en el Context (cerebro)
-            loginUser(response.token, response.user);
+            loginUser(token, userData);
 
             // Redirigimos al muro
             navigate('/home');
