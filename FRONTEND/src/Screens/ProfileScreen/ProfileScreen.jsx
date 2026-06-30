@@ -497,6 +497,7 @@ export const ProfileScreen = () => {
                                             className="inline-edit-input" 
                                             value={editValue} 
                                             onChange={e => setEditValue(e.target.value)} 
+                                            max={new Date().toISOString().split("T")[0]}
                                         />
                                         <div className="inline-edit-actions">
                                             <button className="btn-cancel-inline" onClick={() => setEditingField(null)}>Cancelar</button>
@@ -507,12 +508,12 @@ export const ProfileScreen = () => {
                                     <li className="inline-edit-row">
                                         <div className="inline-edit-content" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                                             <Calendar size={18} className="bio-icon" />
-                                            <span>Fecha de nacimiento: <strong>{profileUser.birth_date ? new Date(profileUser.birth_date).toLocaleDateString() : 'No especificada'}</strong></span>
+                                            <span>Fecha de nacimiento: <strong>{profileUser.birth_date ? profileUser.birth_date.split('T')[0].split('-').reverse().join('/') : 'No especificada'}</strong></span>
                                         </div>
                                         {isOwnProfile && (
                                             <button className="btn-inline-edit" onClick={() => { 
                                                 setEditingField('birth_date'); 
-                                                setEditValue(profileUser.birth_date ? new Date(profileUser.birth_date).toISOString().split('T')[0] : ''); 
+                                                setEditValue(profileUser.birth_date ? profileUser.birth_date.split('T')[0] : ''); 
                                             }}>
                                                 <Edit2 size={16} />
                                             </button>

@@ -24,8 +24,8 @@ export const ProfileSetupScreen = () => {
     const [spotify, setSpotify] = useState(user?.social_links?.spotify || '');
     const [soundcloud, setSoundcloud] = useState(user?.social_links?.soundcloud || '');
     
-    // Convertimos de ISO a YYYY-MM-DD para el input type="date"
-    const defaultDate = user?.birth_date ? new Date(user.birth_date).toISOString().split('T')[0] : '';
+    // Usar substring para evitar desplazamiento de huso horario en Date()
+    const defaultDate = user?.birth_date ? user.birth_date.split('T')[0] : '';
     const [birthDate, setBirthDate] = useState(defaultDate);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -194,6 +194,7 @@ export const ProfileSetupScreen = () => {
                             className="input-field"
                             value={birthDate}
                             onChange={(e) => setBirthDate(e.target.value)}
+                            max={new Date().toISOString().split("T")[0]}
                         />
                     </div>
 

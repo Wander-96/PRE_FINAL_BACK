@@ -22,9 +22,9 @@ export const RegisterScreen = () => {
 
         try {
             await register(email, password, username);
-            
+
             setSuccessMessage('Account created successfully! Redirecting to login...');
-            
+
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
@@ -40,10 +40,6 @@ export const RegisterScreen = () => {
         <div className="login-container">
             <video src={loginVideo} poster={loginWave} className="login-video-bg" style={{ filter: 'hue-rotate(-20deg)' }} autoPlay loop muted playsInline />
 
-            <div className="login-logo">
-                <span style={{color: 'var(--accent-primary)'}}>🎵</span> MIB
-            </div>
-
             <div className="login-modal">
                 <div className="login-form-side">
                     <div className="login-header">
@@ -52,15 +48,15 @@ export const RegisterScreen = () => {
                     </div>
 
                     <form onSubmit={handleSubmit} className="login-form">
-                        
+
                         {error && <div className="error-message">{error}</div>}
                         {successMessage && <div className="success-message">{successMessage}</div>}
 
                         <div className="input-group">
-                            <input 
-                                type="text" 
-                                className="input-field" 
-                                placeholder="Username (e.g. JohnDoe)" 
+                            <input
+                                type="text"
+                                className="input-field"
+                                placeholder="Username (e.g. JohnDoe)"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
@@ -68,10 +64,10 @@ export const RegisterScreen = () => {
                         </div>
 
                         <div className="input-group">
-                            <input 
-                                type="email" 
-                                className="input-field" 
-                                placeholder="Email address" 
+                            <input
+                                type="email"
+                                className="input-field"
+                                placeholder="Email address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -79,19 +75,19 @@ export const RegisterScreen = () => {
                         </div>
 
                         <div className="input-group">
-                            <input 
-                                type="password" 
-                                className="input-field" 
-                                placeholder="Create a strong Password" 
+                            <input
+                                type="password"
+                                className="input-field"
+                                placeholder="Create a strong Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
 
-                        <button 
-                            type="submit" 
-                            className="btn-primary" 
+                        <button
+                            type="submit"
+                            className="btn-primary"
                             disabled={isLoading}
                         >
                             {isLoading ? 'Creating account...' : 'Create Account'}
@@ -100,7 +96,7 @@ export const RegisterScreen = () => {
                         <div className="social-login-container">
                             <button type="button" className="btn-social">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.761H12.545z"/>
+                                    <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.761H12.545z" />
                                 </svg>
                                 Sign up with Google
                             </button>

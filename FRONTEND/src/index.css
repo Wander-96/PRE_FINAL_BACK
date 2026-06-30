@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Fix para el ícono del calendario oscuro en inputs de fecha */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 :root {
   /* Color Palette - Deep Dark Mode */
   --bg-app: #0B0B0E;        /* Very dark, almost black background */
