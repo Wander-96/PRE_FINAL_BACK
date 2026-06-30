@@ -1,5 +1,5 @@
 import ENVIRONMENT from "../config/environment.config.js";
-import mailer_transport from "../config/mailer.config.js";
+
 import ServerError from "../helpers/serverError.helper.js";
 import userRepository from "../repositories/user.repository.js";
 import bcrypt from 'bcrypt';
@@ -42,16 +42,30 @@ class AuthController {
                 ENVIRONMENT.JWT_SECRET
             )
 
-            // Envío de correo de verificación (en segundo plano sin bloquear)
-            mailer_transport.sendMail({
-                to: email,
-                from: ENVIRONMENT.GMAIL_USERNAME,
-                subject: "Verifica tu mail",
-                html: `
-                    <h1>Bienvenido a MIB</h1>
-                    <a href='${ENVIRONMENT.URL_BACKEND}/api/auth/verify-email?verification_token=${verification_token}'>Click aqui</a> para verificar tu cuenta
-                `
-            }).catch(err => console.error("Error enviando correo de verificación:", err));
+            // Envío de correo de verificación vía Brevo API (Puerto 443 - HTTPS)
+            fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': ENVIRONMENT.BREVO_API_KEY,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: 'MIB App', email: ENVIRONMENT.GMAIL_USERNAME },
+                    to: [{ email: email, name: name }],
+                    subject: 'Verifica tu mail',
+                    htmlContent: `
+                        <div style="font-family: sans-serif; padding: 20px;">
+                            <h1>Bienvenido a MIB</h1>
+                            <p>Gracias por registrarte, ${name}. Por favor confirma tu cuenta haciendo clic en el siguiente enlace:</p>
+                            <a href='${ENVIRONMENT.URL_BACKEND}/api/auth/verify-email?verification_token=${verification_token}' style="display:inline-block; padding:10px 20px; background-color:#8B5CF6; color:white; text-decoration:none; border-radius:5px;">Verificar mi cuenta</a>
+                        </div>
+                    `
+                })
+            })
+            .then(res => res.json())
+            .then(data => console.log("Brevo API Response:", data))
+            .catch(err => console.error("Error enviando correo de verificación con Brevo:", err));
 
             // Respuesta exitosa
             return res.status(201).json({
