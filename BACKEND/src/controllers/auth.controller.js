@@ -42,8 +42,8 @@ class AuthController {
                 ENVIRONMENT.JWT_SECRET
             )
 
-            // Envío de correo de verificación
-            await mailer_transport.sendMail({
+            // Envío de correo de verificación (en segundo plano sin bloquear)
+            mailer_transport.sendMail({
                 to: email,
                 from: ENVIRONMENT.GMAIL_USERNAME,
                 subject: "Verifica tu mail",
@@ -51,7 +51,7 @@ class AuthController {
                     <h1>Bienvenido a MIB</h1>
                     <a href='${ENVIRONMENT.URL_BACKEND}/api/auth/verify-email?verification_token=${verification_token}'>Click aqui</a> para verificar tu cuenta
                 `
-            })
+            }).catch(err => console.error("Error enviando correo de verificación:", err));
 
             // Respuesta exitosa
             return res.status(201).json({
@@ -150,9 +150,13 @@ class AuthController {
             if (!user_found) {
                 throw new ServerError("Usuario no registrado", 404)
             }
+            // TEMPORAL PARA MVP: Deshabilitamos el bloqueo por falta de verificación de email
+            // ya que los correos están fallando en Railway por bloqueos de Gmail.
+            /*
             if (!user_found.email_verified) {
                 throw new ServerError("Usuario con verificacion de mail pendiente", 401)
             }
+            */
 
             // Verificación de contraseña
             const is_same_password = await bcrypt.compare(password, user_found.password)
