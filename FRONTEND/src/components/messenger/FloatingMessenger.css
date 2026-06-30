@@ -228,6 +228,14 @@
 }
 
 .chat-bubble-input-area {
+/* Ocultar completamente el mensajero flotante en móviles (se usará la ruta /messages) */
+@media (max-width: 770px) {
+    .floating-messenger-container {
+        display: none !important;
+    }
+}
+
+.chat-bubble-input-area {
     display: flex;
     padding: 12px;
     background-color: var(--bg-secondary, #1a1a1a);

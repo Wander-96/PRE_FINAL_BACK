@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MessageCircle, X, ChevronDown, Send } from 'lucide-react';
+import { useLocation } from 'react-router';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { getSocket } from '../../config/socket.js';
 import { getConversations, getMessages, createOrGetConversation } from '../../services/messageService.js';
@@ -14,8 +15,12 @@ export const FloatingMessenger = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
 
     const socket = getSocket();
+
+    // No renderizar si estamos en la ruta /messages (pantalla dedicada)
+    if (location.pathname === '/messages') return null;
 
     // Load conversations when opened
     useEffect(() => {

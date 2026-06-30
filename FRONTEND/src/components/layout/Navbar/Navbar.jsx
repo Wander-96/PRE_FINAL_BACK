@@ -102,7 +102,7 @@ export const Navbar = () => {
       </div>
 
       <div className="navbar-right">
-        <button className="icon-btn" aria-label="Messages" onClick={() => window.dispatchEvent(new CustomEvent('toggle_messenger'))}>
+        <button className="icon-btn" aria-label="Messages" onClick={() => navigate('/messages')}>
           <MessageSquare size={20} />
         </button>
         <div className="notification-menu-container" ref={notifRef}>
