@@ -13,11 +13,6 @@ const ENVIRONMENT = {
     MONGO_DB_CONNECTION_STRING: process.env.MONGO_DB_CONNECTION_STRING,
     MONGO_DB_NAME: process.env.MONGO_DB_NAME,
     MODE: process.env.MODE,
-*/
-const ENVIRONMENT = {
-    MONGO_DB_CONNECTION_STRING: process.env.MONGO_DB_CONNECTION_STRING,
-    MONGO_DB_NAME: process.env.MONGO_DB_NAME,
-    MODE: process.env.MODE,
     PORT: process.env.PORT,
     GMAIL_USERNAME: process.env.GMAIL_USERNAME,
     GMAIL_PASSWORD: process.env.GMAIL_PASSWORD,
