@@ -150,13 +150,10 @@ class AuthController {
             if (!user_found) {
                 throw new ServerError("Usuario no registrado", 404)
             }
-            // TEMPORAL PARA MVP: Deshabilitamos el bloqueo por falta de verificación de email
-            // ya que los correos están fallando en Railway por bloqueos de Gmail.
-            /*
+            // Verificación de email obligatoria
             if (!user_found.email_verified) {
                 throw new ServerError("Usuario con verificacion de mail pendiente", 401)
             }
-            */
 
             // Verificación de contraseña
             const is_same_password = await bcrypt.compare(password, user_found.password)
