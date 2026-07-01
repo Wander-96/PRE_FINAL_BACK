@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "" // URL a la imagen
     },
+    cover_photo: {
+        type: String,
+        default: "" // URL a la imagen de portada
+    },
     bio: {
         type: String,
         default: ""

@@ -13,8 +13,8 @@ userRouter.use(authMiddleware);
 userRouter.get('/me', userController.getMyProfile);
 
 // PUT /api/users/me (Editar mi perfil)
-// Usamos uploadMiddleware.single('avatar') para indicarle que busque un archivo en el campo "avatar"
-userRouter.put('/me', uploadMiddleware.single('avatar'), userController.updateMyProfile);
+// Usamos uploadMiddleware.fields para aceptar avatar y cover_photo
+userRouter.put('/me', uploadMiddleware.fields([{ name: 'avatar', maxCount: 1 }, { name: 'cover_photo', maxCount: 1 }]), userController.updateMyProfile);
 
 // GET /api/users/:userId (Perfil público de otro usuario)
 userRouter.get('/:userId', userController.getUserProfile);

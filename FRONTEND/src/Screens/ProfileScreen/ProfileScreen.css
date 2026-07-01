@@ -331,7 +331,58 @@
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid transparent;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s ease;
+}
+
+/* Glassmorphism Buttons */
+.btn-glass {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-glass:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-glass:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Botón de Portada */
+.btn-cover {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 5;
+}
+
+/* Modificamos profile-cover para que tenga position relative */
+.profile-cover {
+    height: 250px;
+    background-color: var(--primary-color);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+@media (max-width: 768px) {
 }
 
 .connection-item:hover img {

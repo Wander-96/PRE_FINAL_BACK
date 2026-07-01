@@ -231,15 +231,15 @@ export const ProfileScreen = () => {
         }
     };
 
-    const handleAvatarChange = async (e) => {
-        const file = e.target.files?.[0];
+    const handleImageChange = async (e, type = 'avatar') => {
+        const file = e.target.files[0];
         if (!file) return;
 
-        setIsUploadingAvatar(true);
+        setIsUploading(true);
         try {
             const formData = new FormData();
-            formData.append('avatar', file);
-
+            formData.append(type, file);
+            
             const response = await fetch(`${ENVIRONMENT.URL_API}/api/users/me`, {
                 method: 'PUT',
                 headers: {
@@ -249,16 +249,20 @@ export const ProfileScreen = () => {
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.message || 'Error al subir la imagen');
-
-            const updatedUser = { ...currentUser, ...data.data };
-            loginUser(token, updatedUser);
-            setProfileUser(updatedUser);
-        } catch (err) {
-            console.error('Error al subir avatar:', err);
-            // Podríamos setear un error global si lo deseas
+            if (response.ok) {
+                setProfileUser(data.data);
+                // Si el avatar fue el que cambió, actualizar también currentUser para que cambie en toda la app
+                if (type === 'avatar' && typeof updateCurrentUser === 'function') {
+                    updateCurrentUser(data.data);
+                }
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error(`Error uploading ${type}:`, error);
+            alert(`Hubo un error al actualizar ${type === 'avatar' ? 'el avatar' : 'la portada'}`);
         } finally {
-            setIsUploadingAvatar(false);
+            setIsUploading(false);
         }
     };
 
@@ -304,7 +308,27 @@ export const ProfileScreen = () => {
     return (
         <div className="profile-screen-container">
             <div className="profile-header">
-                <div className="profile-cover">
+                <div 
+                className="profile-cover" 
+                style={{ 
+                    backgroundImage: profileUser.cover_photo 
+                        ? `url(${profileUser.cover_photo.startsWith('http') ? profileUser.cover_photo : `${ENVIRONMENT.URL_API}/${profileUser.cover_photo.replace(/\\/g, '/')}`})` 
+                        : 'none' 
+                }}
+            >
+                {isOwnProfile && (
+                    <label className="btn-glass btn-cover" style={{ cursor: 'pointer' }}>
+                        <Camera size={16} />
+                        Editar Portada
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            style={{ display: 'none' }} 
+                            onChange={(e) => handleImageChange(e, 'cover_photo')} 
+                            disabled={isUploading}
+                        />
+                    </label>
+                )}
                     <div className="cover-gradient"></div>
                 </div>
 
@@ -315,24 +339,24 @@ export const ProfileScreen = () => {
                             alt="Avatar" 
                             className="profile-avatar-img" 
                             onError={(e) => { e.target.src = fallbackAvatar; }} 
-                            style={isUploadingAvatar ? { opacity: 0.5 } : {}}
+                            style={isUploading ? { opacity: 0.5 } : {}}
                         />
                         {isOwnProfile && (
                             <>
                                 <button 
                                     className="btn-edit-avatar" 
                                     onClick={() => avatarInputRef.current?.click()}
-                                    disabled={isUploadingAvatar}
+                                    disabled={isUploading}
                                     title="Cambiar foto de perfil"
                                 >
                                     <Camera size={20} />
                                 </button>
                                 <input 
                                     type="file" 
-                                    ref={avatarInputRef}
-                                    onChange={handleAvatarChange}
                                     accept="image/*" 
                                     style={{ display: 'none' }} 
+                                    onChange={(e) => handleImageChange(e, 'avatar')} 
+                                    disabled={isUploading}
                                 />
                             </>
                         )}
@@ -377,26 +401,26 @@ export const ProfileScreen = () => {
                         ) : (
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 {connStatus === 'none' && (
-                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading}>
+                                    <button className="btn-glass btn-connect" onClick={handleConnectionAction} disabled={isConnLoading}>
                                         Conectar
                                     </button>
                                 )}
                                 {connStatus === 'pending' && connData?.isRequester && (
-                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#555' }}>
+                                    <button className="btn-glass btn-connect" onClick={handleConnectionAction} disabled={isConnLoading}>
                                         Cancelar Solicitud
                                     </button>
                                 )}
                                 {connStatus === 'pending' && !connData?.isRequester && (
-                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#10b981' }}>
+                                    <button className="btn-glass btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ borderColor: '#10b981', color: '#10b981' }}>
                                         Aceptar Solicitud
                                     </button>
                                 )}
                                 {connStatus === 'accepted' && (
-                                    <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#ef4444' }}>
+                                    <button className="btn-glass btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ borderColor: '#ef4444', color: '#ef4444' }}>
                                         Desconectar
                                     </button>
                                 )}
-                                <button className="btn-connect" onClick={handleStartChat} style={{ backgroundColor: 'var(--primary-color, #8b5cf6)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <button className="btn-glass btn-connect" onClick={handleStartChat} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <MessageCircle size={16} /> Mensaje
                                 </button>
                             </div>

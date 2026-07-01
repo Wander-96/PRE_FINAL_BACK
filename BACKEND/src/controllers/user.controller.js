@@ -28,10 +28,18 @@ class UserController {
         try {
             const userId = req.user.id; 
             
-            // Procesamiento de avatar
+            // Procesamiento de imágenes (ahora usamos req.files por uploadMiddleware.fields)
             const updateData = { ...req.body };
-            if (req.file) {
-                updateData.avatar = req.file.path; // Aquí guardamos la URL oficial de la nube
+            
+            if (req.files) {
+                if (req.files.avatar && req.files.avatar[0]) {
+                    updateData.avatar = req.files.avatar[0].path; // URL de Cloudinary
+                }
+                if (req.files.cover_photo && req.files.cover_photo[0]) {
+                    updateData.cover_photo = req.files.cover_photo[0].path; // URL de Cloudinary
+                }
+            } else if (req.file) { // Por retrocompatibilidad por si acaso
+                updateData.avatar = req.file.path;
             }
 
             // Parsear social_links si viene como string desde FormData
