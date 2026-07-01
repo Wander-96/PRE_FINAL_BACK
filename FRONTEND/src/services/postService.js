@@ -21,6 +21,19 @@ export const getFeed = async (page = 1, limit = 10) => {
     return data; 
 };
 
+export const getPostById = async (postId) => {
+    const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/${postId}`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Error al obtener el post');
+    }
+    return data;
+};
+
 export const getPostsByUser = async (userId, page = 1, limit = 10) => {
     const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/user/${userId}?page=${page}&limit=${limit}`, {
         method: 'GET',

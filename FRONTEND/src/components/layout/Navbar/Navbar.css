@@ -75,6 +75,7 @@
   width: 200px;
 }
 .icon-btn {
+  position: relative;
   background: transparent;
   border: none;
   color: #8b5cf6;

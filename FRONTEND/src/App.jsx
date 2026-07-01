@@ -5,6 +5,7 @@ import { RegisterScreen } from './Screens/RegisterScreen/RegisterScreen.jsx'
 import { HomeScreen } from './Screens/HomeScreen/HomeScreen.jsx'
 import { ProfileSetupScreen } from './Screens/ProfileSetupScreen/ProfileSetupScreen.jsx'
 import { ProfileScreen } from './Screens/ProfileScreen/ProfileScreen.jsx'
+import { SinglePostScreen } from './Screens/SinglePostScreen/SinglePostScreen.jsx'
 import { ForgotPasswordScreen } from './Screens/ForgotPasswordScreen/ForgotPasswordScreen.jsx'
 import { ResetPasswordScreen } from './Screens/ResetPasswordScreen/ResetPasswordScreen.jsx'
 import { AuthContextProvider } from './context/AuthContext.jsx'
@@ -59,6 +60,7 @@ const App = () => {
             
             <Route path='/profile' element={<ProfileScreen />} />
             <Route path='/profile/:userId' element={<ProfileScreen />} />
+            <Route path='/post/:postId' element={<SinglePostScreen />} />
             <Route path='/messages' element={<h2>Messages (En construcción)</h2>} />
           </Route>
         </Route>

@@ -54,6 +54,8 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editCommentText, setEditCommentText] = useState('');
+  const [commentsPage, setCommentsPage] = useState(1);
+  const [hasMoreComments, setHasMoreComments] = useState(false);
 
   // Media Modal (Lightbox) state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -163,15 +165,22 @@ export const PostCard = ({ post, onPostDeleted }) => {
   const toggleComments = async () => {
     setShowComments(!showComments);
     if (!showComments && comments.length === 0) {
-      loadComments();
+      loadComments(1);
     }
   };
 
-  const loadComments = async () => {
+  const loadComments = async (pageToLoad = 1) => {
     try {
       setLoadingComments(true);
-      const data = await getCommentsByPost(post._id);
-      setComments(data.data || []);
+      const data = await getCommentsByPost(post._id, pageToLoad, 10);
+      const newFetched = data.data || [];
+      if (pageToLoad === 1) {
+        setComments(newFetched);
+      } else {
+        setComments(prev => [...prev, ...newFetched]);
+      }
+      setHasMoreComments(newFetched.length === 10);
+      setCommentsPage(pageToLoad);
     } catch (error) {
       console.error(error);
     } finally {
@@ -459,6 +468,16 @@ export const PostCard = ({ post, onPostDeleted }) => {
                 </div>
               )})}
               {comments.length === 0 && <div className="no-comments">Sé el primero en comentar.</div>}
+              {hasMoreComments && (
+                <div className="comments-load-more" style={{ textAlign: 'center', marginTop: '12px' }}>
+                  <button 
+                    onClick={() => loadComments(commentsPage + 1)} 
+                    style={{ background: 'none', border: 'none', color: '#8b5cf6', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '500' }}
+                  >
+                    Ver más comentarios...
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

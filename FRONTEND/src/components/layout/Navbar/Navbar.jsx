@@ -70,9 +70,12 @@ export const Navbar = () => {
   const handleNotificationClick = (notification) => {
     setIsNotifOpen(false);
     if (notification.type === 'LIKE' || notification.type === 'COMMENT') {
-       // Por ahora redirigimos al perfil del autor o al inicio, idealmente a SinglePostScreen.
-       // Asumiendo que el post está en el feed, podemos redirigir al feed:
-       navigate('/home');
+       // Redirigir al post individual
+       if (notification.related_entity) {
+         navigate(`/post/${notification.related_entity}`);
+       } else {
+         navigate('/home');
+       }
     } else if (notification.type === 'PROJECT_INVITATION') {
        navigate('/projects');
     }

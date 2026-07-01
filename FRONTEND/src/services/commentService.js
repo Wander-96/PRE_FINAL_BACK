@@ -8,8 +8,8 @@ const getAuthHeaders = () => {
     };
 };
 
-export const getCommentsByPost = async (postId) => {
-    const response = await fetch(`${ENVIRONMENT.URL_API}/api/comments/post/${postId}`, {
+export const getCommentsByPost = async (postId, page = 1, limit = 10) => {
+    const response = await fetch(`${ENVIRONMENT.URL_API}/api/comments/post/${postId}?page=${page}&limit=${limit}`, {
         method: 'GET',
         headers: getAuthHeaders()
     });
