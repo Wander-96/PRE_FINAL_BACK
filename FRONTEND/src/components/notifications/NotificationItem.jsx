@@ -12,6 +12,7 @@ export const NotificationItem = ({ notification, onClick }) => {
             case 'COMMENT': return <MessageSquare size={16} className="text-blue-500" />;
             case 'PROJECT_INVITATION': return <UserPlus size={16} className="text-green-500" />;
             case 'FOLLOW': return <UserPlus size={16} className="text-purple-500" />;
+            case 'CONNECTION': return <UserPlus size={16} className="text-yellow-500" style={{ color: '#f59e0b' }} />;
             default: return <Heart size={16} />;
         }
     };
@@ -22,6 +23,7 @@ export const NotificationItem = ({ notification, onClick }) => {
             case 'COMMENT': return 'comentó en tu publicación.';
             case 'PROJECT_INVITATION': return 'te invitó a unirse a su proyecto musical.';
             case 'FOLLOW': return 'comenzó a seguirte.';
+            case 'CONNECTION': return 'quiere conectar contigo.';
             default: return 'interactuó contigo.';
         }
     };

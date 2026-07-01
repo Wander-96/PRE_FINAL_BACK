@@ -383,7 +383,7 @@ export const ProfileScreen = () => {
                                 )}
                                 {connStatus === 'pending' && connData?.isRequester && (
                                     <button className="btn-connect" onClick={handleConnectionAction} disabled={isConnLoading} style={{ backgroundColor: '#555' }}>
-                                        Pendiente
+                                        Cancelar Solicitud
                                     </button>
                                 )}
                                 {connStatus === 'pending' && !connData?.isRequester && (
