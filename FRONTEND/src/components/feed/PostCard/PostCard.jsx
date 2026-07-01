@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../../context/AuthContext.jsx';
 import { toggleLike, deletePost, updatePost } from '../../../services/postService.js';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService.js';
-import { MoreVertical, Trash2, Heart, MessageCircle, Send, Edit2, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MoreVertical, Trash2, Heart, MessageCircle, Send, Edit2, X, ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
 import { Link } from 'react-router';
 import { PostDetailModal } from '../PostDetailModal/PostDetailModal.jsx';
 import './PostCard.css';
@@ -253,7 +253,12 @@ export const PostCard = ({ post, onPostDeleted }) => {
           return (
             <div key={index} className="post-media-item" onClick={() => openModal(index)}>
               {item.type === 'VIDEO' ? (
-                <video src={item.url} className="post-media-video" muted />
+                <div className="video-thumbnail-container">
+                  <video src={item.url} className="post-media-video" muted />
+                  <div className="video-play-overlay">
+                    <PlayCircle size={48} color="white" />
+                  </div>
+                </div>
               ) : (
                 <img src={item.url} alt="media" className="post-media-img" />
               )}
