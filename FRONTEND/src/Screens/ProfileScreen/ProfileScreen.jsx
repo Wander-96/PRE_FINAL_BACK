@@ -129,12 +129,16 @@ export const ProfileScreen = () => {
     };
 
     useEffect(() => {
+        // Limpiamos el perfil anterior antes de cargar el nuevo para forzar estado de carga
+        setProfileUser(null);
+        setError(null);
+
         if (!isOwnProfile) {
             fetchUserProfile();
         }
         fetchUserPosts();
         fetchConnectionData();
-    }, [targetUserId, isOwnProfile]);
+    }, [targetUserId, isOwnProfile, token]);
 
     const handlePostCreated = (newPost) => {
         setPosts((prevPosts) => [newPost, ...prevPosts]);
@@ -260,6 +264,15 @@ export const ProfileScreen = () => {
         }
     };
 
+    if (error) {
+        return (
+            <div className="error-profile" style={{color: 'red', textAlign: 'center', padding: '50px'}}>
+                <h2>Error cargando el perfil</h2>
+                <p>{error}</p>
+            </div>
+        );
+    }
+    
     if (!profileUser) return <div className="loading-profile">Cargando perfil...</div>;
 
     // Avatar setup
