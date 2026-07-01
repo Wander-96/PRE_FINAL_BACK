@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { getPostById } from '../../services/postService.js';
 import { PostCard } from '../../components/feed/PostCard/PostCard.jsx';
-import { Navbar } from '../../components/layout/Navbar/Navbar.jsx';
-import { Sidebar } from '../../components/layout/Sidebar/Sidebar.jsx';
 import { ArrowLeft } from 'lucide-react';
 import './SinglePostScreen.css';
 
@@ -37,33 +35,27 @@ export const SinglePostScreen = () => {
     };
 
     return (
-        <div className="layout-container">
-            <Navbar />
-            <div className="layout-content">
-                <Sidebar />
-                <main className="main-content single-post-main">
-                    <div className="single-post-header">
-                        <button className="back-btn" onClick={() => navigate(-1)}>
-                            <ArrowLeft size={20} /> Volver
-                        </button>
-                        <h2>Publicación</h2>
-                    </div>
+        <div className="single-post-main" style={{ width: '100%', padding: '24px' }}>
+            <div className="single-post-header">
+                <button className="back-btn" onClick={() => navigate(-1)}>
+                    <ArrowLeft size={20} /> Volver
+                </button>
+                <h2>Publicación</h2>
+            </div>
 
-                    <div className="single-post-container">
-                        {loading ? (
-                            <div className="loading-spinner">Cargando publicación...</div>
-                        ) : error ? (
-                            <div className="error-message">
-                                <p>{error}</p>
-                                <button className="btn-primary" onClick={() => navigate('/home')}>Ir al Inicio</button>
-                            </div>
-                        ) : post ? (
-                            <PostCard post={post} onPostDeleted={handlePostDeleted} />
-                        ) : (
-                            <div className="error-message">Publicación no encontrada.</div>
-                        )}
+            <div className="single-post-container">
+                {loading ? (
+                    <div className="loading-spinner">Cargando publicación...</div>
+                ) : error ? (
+                    <div className="error-message">
+                        <p>{error}</p>
+                        <button className="btn-primary" onClick={() => navigate('/home')}>Ir al Inicio</button>
                     </div>
-                </main>
+                ) : post ? (
+                    <PostCard post={post} onPostDeleted={handlePostDeleted} />
+                ) : (
+                    <div className="error-message">Publicación no encontrada.</div>
+                )}
             </div>
         </div>
     );
