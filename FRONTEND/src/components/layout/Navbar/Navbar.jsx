@@ -77,8 +77,16 @@ export const Navbar = () => {
        } else {
          navigate('/home');
        }
+    } else if (notification.type === 'CONNECTION') {
+       if (notification.sender && notification.sender._id) {
+           navigate(`/profile/${notification.sender._id}`);
+       } else {
+           navigate('/home');
+       }
     } else if (notification.type === 'PROJECT_INVITATION') {
        navigate('/projects');
+    } else {
+       navigate('/home');
     }
   };
 
