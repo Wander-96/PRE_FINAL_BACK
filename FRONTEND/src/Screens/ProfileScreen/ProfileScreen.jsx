@@ -75,12 +75,7 @@ export const ProfileScreen = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isModalOpen]);
 
-    // Temporary current user assignment for own profile
-    useEffect(() => {
-        if (isOwnProfile && currentUser) {
-            setProfileUser(currentUser);
-        }
-    }, [isOwnProfile, currentUser, targetUserId]);
+
 
     const fetchUserPosts = async () => {
         if (!targetUserId) return;
@@ -133,12 +128,15 @@ export const ProfileScreen = () => {
         setProfileUser(null);
         setError(null);
 
-        if (!isOwnProfile) {
+        if (isOwnProfile && currentUser) {
+            setProfileUser(currentUser);
+        } else {
             fetchUserProfile();
         }
+        
         fetchUserPosts();
         fetchConnectionData();
-    }, [targetUserId, isOwnProfile, token]);
+    }, [targetUserId, isOwnProfile, token, currentUser]);
 
     const handlePostCreated = (newPost) => {
         setPosts((prevPosts) => [newPost, ...prevPosts]);
