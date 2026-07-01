@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { globalSearch } from '../../services/searchService.js';
-import { Navbar } from '../../components/layout/Navbar/Navbar.jsx';
-import { Sidebar } from '../../components/layout/Sidebar/Sidebar.jsx';
 import { PostCard } from '../../components/feed/PostCard/PostCard.jsx';
 import ENVIRONMENT from '../../config/environment.js';
 import './SearchScreen.css';
@@ -42,30 +40,20 @@ export const SearchScreen = () => {
 
     if (!query || query.length < 2) {
         return (
-            <div className="layout-container">
-                <Navbar />
-                <div className="layout-content">
-                    <Sidebar />
-                    <main className="main-content search-main">
-                        <div className="search-header">
-                            <h2>Búsqueda</h2>
-                            <p className="text-muted">Ingresa al menos 2 caracteres para buscar.</p>
-                        </div>
-                    </main>
+            <main className="main-content search-main">
+                <div className="search-header">
+                    <h2>Búsqueda</h2>
+                    <p className="text-muted">Ingresa al menos 2 caracteres para buscar.</p>
                 </div>
-            </div>
+            </main>
         );
     }
 
     return (
-        <div className="layout-container">
-            <Navbar />
-            <div className="layout-content">
-                <Sidebar />
-                <main className="main-content search-main">
-                    <div className="search-header">
-                        <h2>Resultados para "{query}"</h2>
-                    </div>
+        <main className="main-content search-main">
+            <div className="search-header">
+                <h2>Resultados para "{query}"</h2>
+            </div>
 
                     <div className="search-tabs">
                         <button className={`search-tab ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>Todo</button>
@@ -83,7 +71,7 @@ export const SearchScreen = () => {
                                 {/* Usuarios */}
                                 {(activeTab === 'all' || activeTab === 'users') && (
                                     <div className="search-section">
-                                        <h3>Músicos Encontrados</h3>
+                                        <h3>Usuarios Encontrados</h3>
                                         {users.length > 0 ? (
                                             <div className="connections-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '16px', marginTop: '16px' }}>
                                                 {users.map(user => (
@@ -103,7 +91,7 @@ export const SearchScreen = () => {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-muted">No se encontraron músicos con ese término.</p>
+                                            <p className="text-muted">No se encontraron usuarios con ese término.</p>
                                         )}
                                     </div>
                                 )}
@@ -127,7 +115,5 @@ export const SearchScreen = () => {
                         )}
                     </div>
                 </main>
-            </div>
-        </div>
     );
 };
