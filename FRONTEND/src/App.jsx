@@ -6,6 +6,7 @@ import { HomeScreen } from './Screens/HomeScreen/HomeScreen.jsx'
 import { ProfileSetupScreen } from './Screens/ProfileSetupScreen/ProfileSetupScreen.jsx'
 import { ProfileScreen } from './Screens/ProfileScreen/ProfileScreen.jsx'
 import { SinglePostScreen } from './Screens/SinglePostScreen/SinglePostScreen.jsx'
+import { SearchScreen } from './Screens/SearchScreen/SearchScreen.jsx'
 import { ForgotPasswordScreen } from './Screens/ForgotPasswordScreen/ForgotPasswordScreen.jsx'
 import { ResetPasswordScreen } from './Screens/ResetPasswordScreen/ResetPasswordScreen.jsx'
 import { AuthContextProvider } from './context/AuthContext.jsx'
@@ -56,8 +57,8 @@ const App = () => {
             />
             {/* Rutas futuras protegidas irán aquí para que compartan el Sidebar */}
             <Route path='/projects' element={<h2>Projects (En construcción)</h2>} />
-            <Route path='/search' element={<h2>Search (En construcción)</h2>} />
-            
+            <Route path='/search' element={<SearchScreen />} />
+            <Route path='/messages' element={<h2>Messages (En construcción)</h2>} />
             <Route path='/profile' element={<ProfileScreen />} />
             <Route path='/profile/:userId' element={<ProfileScreen />} />
             <Route path='/post/:postId' element={<SinglePostScreen />} />

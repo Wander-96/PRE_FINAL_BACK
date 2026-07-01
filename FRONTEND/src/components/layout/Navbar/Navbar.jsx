@@ -14,6 +14,7 @@ export const Navbar = () => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -91,6 +92,14 @@ export const Navbar = () => {
     navigate('/profile');
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim().length >= 2) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery(''); // Opcional: limpiar la barra
+    }
+  };
+
   return (
     <header className="top-navbar">
       <div className="navbar-left" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
@@ -98,10 +107,15 @@ export const Navbar = () => {
       </div>
 
       <div className="navbar-center">
-        <div className="search-bar">
+        <form className="search-bar" onSubmit={handleSearchSubmit}>
           <Search className="search-icon" size={16} />
-          <input type="text" placeholder="Search musicians, tracks, sessions" />
-        </div>
+          <input 
+            type="text" 
+            placeholder="Search musicians, tracks, sessions" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </form>
       </div>
 
       <div className="navbar-right">

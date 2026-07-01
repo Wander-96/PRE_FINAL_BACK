@@ -44,6 +44,22 @@ class PostRepository {
     async softDelete(postId) {
         return await Post.findByIdAndUpdate(postId, { status: 'DELETED' }, { new: true })
     }
+    // Búsqueda global de publicaciones por contenido
+    async search(query, limit = 10, page = 1) {
+        const skip = (page - 1) * limit
+        return await Post.find({
+            status: 'ACTIVE',
+            content: { $regex: query, $options: 'i' }
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate('fk_id_user', 'name apellido avatar')
+        .populate({
+            path: 'fk_id_reposted_post',
+            populate: { path: 'fk_id_user', select: 'name apellido avatar' }
+        })
+    }
 }
 
 export default new PostRepository()

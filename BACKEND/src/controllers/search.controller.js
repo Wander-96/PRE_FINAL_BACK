@@ -1,5 +1,6 @@
 import userRepository from '../repositories/user.repository.js';
 import projectRepository from '../repositories/project.repository.js';
+import postRepository from '../repositories/post.repository.js';
 
 class SearchController {
     async globalSearch(req, res) {
@@ -26,6 +27,12 @@ class SearchController {
             if (type === 'all' || type === 'projects') {
                 const projects = await projectRepository.search(query, limit, page);
                 results.projects = projects;
+            }
+
+            // Búsqueda de publicaciones
+            if (type === 'all' || type === 'posts') {
+                const posts = await postRepository.search(query, limit, page);
+                results.posts = posts;
             }
 
             return res.status(200).json({ ok: true, data: results });
