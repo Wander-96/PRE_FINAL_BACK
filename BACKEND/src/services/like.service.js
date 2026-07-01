@@ -47,6 +47,12 @@ class LikeService {
             return { message: 'Like agregado', action: 'LIKE' }
         }
     }
+
+    // Consultar estado de Like de un usuario para un post
+    async getLikeStatus(postId, userId) {
+        const existingLike = await likeRepository.findLike(postId, userId)
+        return { isLiked: !!existingLike }
+    }
 }
 
 export default new LikeService()

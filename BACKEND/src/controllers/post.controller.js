@@ -94,6 +94,17 @@ class PostController {
             res.status(400).json({ ok: false, message: error.message })
         }
     }
+
+    async getLikeStatus(req, res) {
+        try {
+            const { postId } = req.params
+            const userId = req.user.id
+            const result = await likeService.getLikeStatus(postId, userId)
+            res.status(200).json({ ok: true, isLiked: result.isLiked })
+        } catch (error) {
+            res.status(400).json({ ok: false, message: error.message })
+        }
+    }
 }
 
 export default new PostController()

@@ -23,5 +23,6 @@ postRouter.post('/', uploadMiddleware.array('media', 10), postController.createP
 
 // ==== RUTAS DE LIKES ====
 postRouter.patch('/:postId/like', postController.toggleLike) // Dar o quitar Like (Toggle) con PATCH
+postRouter.get('/:postId/like/status', postController.getLikeStatus) // Saber si ya dio like
 
 export default postRouter
