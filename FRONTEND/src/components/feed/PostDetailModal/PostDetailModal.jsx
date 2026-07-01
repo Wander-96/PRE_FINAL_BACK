@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext.jsx';
-import { toggleLike } from '../../../services/postService.js';
+import { toggleLike, getLikeStatus } from '../../../services/postService.js';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService.js';
 import { Heart, MessageCircle, Send, Edit2, Trash2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
@@ -24,6 +24,8 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
     const [loadingComments, setLoadingComments] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editCommentText, setEditCommentText] = useState('');
+    const [commentsPage, setCommentsPage] = useState(1);
+    const [hasMoreComments, setHasMoreComments] = useState(false);
 
     const author = currentPost?.fk_id_user;
     const authorName = author?.name || 'Musician';
@@ -62,16 +64,28 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
     useEffect(() => {
         if (currentPost) {
             setLikesCount(currentPost.likesCount || 0);
-            loadComments();
+            loadComments(1);
+            if (user) {
+                getLikeStatus(currentPost._id).then(status => {
+                    setIsLiked(status);
+                }).catch(err => console.error("Error fetching like status", err));
+            }
         }
-    }, [currentPost?._id]);
+    }, [currentPost?._id, user]);
 
-    const loadComments = async () => {
+    const loadComments = async (pageToLoad = 1) => {
         if (!currentPost?._id) return;
         try {
             setLoadingComments(true);
-            const data = await getCommentsByPost(currentPost._id);
-            setComments(data.data || []);
+            const data = await getCommentsByPost(currentPost._id, pageToLoad, 10);
+            const newFetched = data.data || [];
+            if (pageToLoad === 1) {
+                setComments(newFetched);
+            } else {
+                setComments(prev => [...prev, ...newFetched]);
+            }
+            setHasMoreComments(newFetched.length === 10);
+            setCommentsPage(pageToLoad);
         } catch (error) {
             console.error(error);
         } finally {
@@ -208,7 +222,7 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
 
                         <div className="pdm-stats">
                             <span><Heart size={14} fill={isLiked ? '#ef4444' : 'none'} color={isLiked ? '#ef4444' : 'currentColor'} /> {likesCount}</span>
-                            <span>{comments.length} comentarios</span>
+                            <span>{currentPost?.commentsCount || comments.length} comentarios</span>
                         </div>
 
                         <div className="pdm-actions">
@@ -272,6 +286,16 @@ export const PostDetailModal = ({ post, mediaList, initialMediaIndex = 0, onClos
                             )}
                             {comments.length === 0 && !loadingComments && (
                                 <div className="no-comments pdm-no-comments">Sé el primero en comentar.</div>
+                            )}
+                            {hasMoreComments && (
+                                <div className="comments-load-more" style={{ textAlign: 'center', marginTop: '12px', paddingBottom: '12px' }}>
+                                    <button 
+                                        onClick={() => loadComments(commentsPage + 1)} 
+                                        style={{ background: 'none', border: 'none', color: '#8b5cf6', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '500' }}
+                                    >
+                                        Ver más comentarios...
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
