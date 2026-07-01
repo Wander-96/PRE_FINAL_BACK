@@ -620,8 +620,28 @@ export const ProfileScreen = () => {
 
                     {activeTab === 'Conexiones' && (
                         <div className="profile-card connections-tab-card">
-                            <h3>Conexiones (0)</h3>
-                            <p className="text-muted">Aún no hay conexiones para mostrar.</p>
+                            <h3>Conexiones ({connectionsList.length})</h3>
+                            {connectionsList.length > 0 ? (
+                                <div className="connections-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '16px', marginTop: '20px' }}>
+                                    {connectionsList.map(conn => (
+                                        <div 
+                                            key={conn.connectionId} 
+                                            className="connection-item"
+                                            onClick={() => navigate(`/profile/${conn._id}`)}
+                                            style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+                                        >
+                                            <img 
+                                                src={conn.avatar ? (conn.avatar.startsWith('http') ? conn.avatar : `${ENVIRONMENT.URL_API}/${conn.avatar.replace(/\\/g, '/')}`) : `https://ui-avatars.com/api/?name=${encodeURIComponent(conn.name)}&background=8b5cf6&color=fff`} 
+                                                alt={conn.name} 
+                                                style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginBottom: '8px' }}
+                                            />
+                                            <span className="connection-name" style={{ fontWeight: '500', color: '#e2e8f0', textAlign: 'center' }}>{conn.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-muted" style={{ marginTop: '20px' }}>Aún no hay conexiones para mostrar.</p>
+                            )}
                         </div>
                     )}
                     {activeTab === 'Fotos' && (
