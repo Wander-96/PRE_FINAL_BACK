@@ -37,8 +37,8 @@ export const SinglePostScreen = () => {
     return (
         <div className="single-post-main" style={{ width: '100%', padding: '24px' }}>
             <div className="single-post-header">
-                <button className="back-btn" onClick={() => navigate(-1)}>
-                    <ArrowLeft size={20} /> Volver
+                <button className="back-btn" onClick={() => navigate('/home')}>
+                    <ArrowLeft size={20} /> Volver al Inicio
                 </button>
                 <h2>Publicación</h2>
             </div>
