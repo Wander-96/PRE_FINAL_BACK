@@ -44,12 +44,15 @@ class PostRepository {
     async softDelete(postId) {
         return await Post.findByIdAndUpdate(postId, { status: 'DELETED' }, { new: true })
     }
-    // Búsqueda global de publicaciones por contenido
-    async search(query, limit = 10, page = 1) {
+    // Búsqueda global de publicaciones por contenido o por usuario
+    async search(query, userIds = [], limit = 10, page = 1) {
         const skip = (page - 1) * limit
         return await Post.find({
             status: 'ACTIVE',
-            content: { $regex: query, $options: 'i' }
+            $or: [
+                { content: { $regex: query, $options: 'i' } },
+                ...(userIds.length > 0 ? [{ fk_id_user: { $in: userIds } }] : [])
+            ]
         })
         .sort({ createdAt: -1 })
         .skip(skip)

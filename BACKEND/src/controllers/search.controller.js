@@ -31,7 +31,16 @@ class SearchController {
 
             // Búsqueda de publicaciones
             if (type === 'all' || type === 'posts') {
-                const posts = await postRepository.search(query, limit, page);
+                // Extraer IDs de usuarios encontrados para incluirlos en la búsqueda de posts
+                const userIds = results.users ? results.users.map(u => u._id) : [];
+                
+                // Si type es solo 'posts', buscamos a los usuarios igual para sacar sus IDs
+                if (type === 'posts') {
+                    const tempUsers = await userRepository.search(query, limit, page);
+                    userIds.push(...tempUsers.map(u => u._id));
+                }
+
+                const posts = await postRepository.search(query, userIds, limit, page);
                 results.posts = posts;
             }
 
