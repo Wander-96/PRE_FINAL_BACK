@@ -84,7 +84,7 @@ export const getConnectionStatus = async (targetUserId) => {
     try {
         const response = await fetch(`${API_URL}/status/${targetUserId}`, {
             method: 'GET',
-            headers: getAuthenticatedHeaders()
+            headers: getAuthHeaders()
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
