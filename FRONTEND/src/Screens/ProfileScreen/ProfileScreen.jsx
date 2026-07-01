@@ -110,10 +110,31 @@ export const ProfileScreen = () => {
         }
     };
 
+    const fetchUserProfile = async () => {
+        if (isOwnProfile || !targetUserId) return;
+        try {
+            const response = await fetch(`${ENVIRONMENT.URL_API}/api/users/${targetUserId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setProfileUser(data.data);
+            } else {
+                setError(data.message);
+            }
+        } catch (err) {
+            console.error("Error fetching profile user", err);
+            setError(err.message);
+        }
+    };
+
     useEffect(() => {
+        if (!isOwnProfile) {
+            fetchUserProfile();
+        }
         fetchUserPosts();
         fetchConnectionData();
-    }, [targetUserId]);
+    }, [targetUserId, isOwnProfile]);
 
     const handlePostCreated = (newPost) => {
         setPosts((prevPosts) => [newPost, ...prevPosts]);
