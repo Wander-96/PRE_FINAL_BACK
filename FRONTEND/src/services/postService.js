@@ -88,6 +88,19 @@ export const toggleLike = async (postId) => {
     return data;
 };
 
+export const getLikeStatus = async (postId) => {
+    const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/${postId}/like/status`, {
+        method: 'GET',
+        headers: getAuthHeaders()
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || 'Error al obtener estado de like');
+    }
+    return data.isLiked;
+};
+
 export const deletePost = async (postId) => {
     const response = await fetch(`${ENVIRONMENT.URL_API}/api/posts/${postId}`, {
         method: 'DELETE',

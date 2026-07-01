@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../../context/AuthContext.jsx';
-import { toggleLike, deletePost, updatePost } from '../../../services/postService.js';
+import { toggleLike, deletePost, updatePost, getLikeStatus } from '../../../services/postService.js';
 import { getCommentsByPost, createComment, deleteComment, updateComment } from '../../../services/commentService.js';
 import { MoreVertical, Trash2, Heart, MessageCircle, Send, Edit2, X, ChevronLeft, ChevronRight, PlayCircle } from 'lucide-react';
 import { Link } from 'react-router';
@@ -58,6 +58,15 @@ export const PostCard = ({ post, onPostDeleted }) => {
   // Media Modal (Lightbox) state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMediaIndex, setModalMediaIndex] = useState(0);
+
+  // Fetch inicial del estado de like
+  useEffect(() => {
+    if (user && post._id) {
+      getLikeStatus(post._id).then(status => {
+        setIsLiked(status);
+      }).catch(err => console.error("Error fetching like status", err));
+    }
+  }, [post._id, user]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
