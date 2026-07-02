@@ -12,6 +12,7 @@ class UserService {
             name: user.name,
             email: user.email,
             avatar: user.avatar,
+            cover_photo: user.cover_photo,
             bio: user.bio,
             birth_date: user.birth_date,
             last_name: user.last_name,
@@ -25,7 +26,7 @@ class UserService {
 
     // Actualizar perfil
     async updateProfile(userId, updateData) {
-        const allowedUpdates = ['name', 'last_name', 'birth_date', 'country', 'avatar', 'bio', 'instruments', 'social_links', 'is_profile_complete']
+        const allowedUpdates = ['name', 'last_name', 'birth_date', 'country', 'avatar', 'cover_photo', 'bio', 'instruments', 'social_links', 'is_profile_complete']
         const dataToUpdate = {}
 
         // Filtrado de campos permitidos
