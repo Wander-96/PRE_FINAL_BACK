@@ -57,7 +57,7 @@ export const ProfileScreen = () => {
     const [editingField, setEditingField] = useState(null);
     const [editValue, setEditValue] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const avatarInputRef = useRef(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
