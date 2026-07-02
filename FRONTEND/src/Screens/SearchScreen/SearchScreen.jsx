@@ -15,7 +15,7 @@ export const SearchScreen = () => {
     const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
 
-    // Filter tabs: 'all', 'users', 'posts'
+    // Pestañas de filtrado.
     const [activeTab, setActiveTab] = useState('all');
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export const SearchScreen = () => {
                             <div className="error-message">{error}</div>
                         ) : (
                             <>
-                                {/* Usuarios */}
+                                {/* Resultados de usuarios. */}
                                 {(activeTab === 'all' || activeTab === 'users') && (
                                     <div className="search-section">
                                         <h3>Usuarios Encontrados</h3>
@@ -96,7 +96,7 @@ export const SearchScreen = () => {
                                     </div>
                                 )}
 
-                                {/* Publicaciones */}
+                                {/* Resultados de publicaciones. */}
                                 {(activeTab === 'all' || activeTab === 'posts') && (
                                     <div className="search-section" style={{ marginTop: '32px' }}>
                                         <h3>Publicaciones Encontradas</h3>

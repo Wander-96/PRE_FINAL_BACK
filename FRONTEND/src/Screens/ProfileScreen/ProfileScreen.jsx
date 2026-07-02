@@ -37,7 +37,7 @@ export const ProfileScreen = () => {
     const { userId } = useParams();
     const navigate = useNavigate();
 
-    // Self profile check
+    // Verificación de perfil propio.
     const isOwnProfile = !userId || (currentUser && userId === currentUser.id);
     const targetUserId = userId || (currentUser ? currentUser.id : null);
 
@@ -47,13 +47,13 @@ export const ProfileScreen = () => {
     const [error, setError] = useState(null);
     const [profileUser, setProfileUser] = useState(null); 
     
-    // Connection States
+    // Estados de conexión.
     const [connStatus, setConnStatus] = useState('none'); // 'none', 'pending', 'accepted', 'self'
     const [connData, setConnData] = useState(null);
     const [connectionsList, setConnectionsList] = useState([]);
     const [isConnLoading, setIsConnLoading] = useState(false); 
 
-    // Inline Editing States
+    // Estados de edición.
     const [editingField, setEditingField] = useState(null);
     const [editValue, setEditValue] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -124,7 +124,7 @@ export const ProfileScreen = () => {
     };
 
     useEffect(() => {
-        // Limpiamos el perfil anterior antes de cargar el nuevo para forzar estado de carga
+        // Reset de estado temporal.
         setProfileUser(null);
         setError(null);
 
@@ -213,9 +213,9 @@ export const ProfileScreen = () => {
             } else if (connStatus === 'pending' && !connData?.isRequester && connData?.connectionId) {
                 await acceptConnectionRequest(connData.connectionId);
                 setConnStatus('accepted');
-                fetchConnectionData(); // Refresh list
+                fetchConnectionData();
             } else if (connData?.connectionId) {
-                // Cancel pending request or remove connection
+                // Cancelar solicitud o eliminar conexión.
                 if (window.confirm("¿Seguro que quieres eliminar esta conexión/solicitud?")) {
                     await removeConnection(connData.connectionId);
                     setConnStatus('none');
@@ -251,7 +251,7 @@ export const ProfileScreen = () => {
             const data = await response.json();
             if (response.ok) {
                 setProfileUser(data.data);
-                // Si el avatar fue el que cambió, actualizar también currentUser para que cambie en toda la app
+                // Actualización de estado global (avatar).
                 if (type === 'avatar' && typeof updateCurrentUser === 'function') {
                     updateCurrentUser(data.data);
                 }
@@ -277,7 +277,7 @@ export const ProfileScreen = () => {
     
     if (!profileUser) return <div className="loading-profile">Cargando perfil...</div>;
 
-    // Avatar setup
+    // Configuración de avatar.
     const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(profileUser.name)}&background=8b5cf6&color=fff`;
     const avatarUrl = profileUser.avatar 
         ? (profileUser.avatar.startsWith('http') ? profileUser.avatar : `${ENVIRONMENT.URL_API}/${profileUser.avatar.replace(/\\/g, '/')}`)
@@ -285,7 +285,7 @@ export const ProfileScreen = () => {
 
     const dummyConnections = [];
 
-    // Aggregate media from all posts
+    // Agregación multimedia.
     const allMedia = posts.reduce((acc, post) => {
         if (post.media && post.media.length > 0) {
             const mediaWithPost = post.media.map((m, index) => ({

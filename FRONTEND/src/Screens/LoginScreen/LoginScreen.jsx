@@ -21,17 +21,17 @@ export const LoginScreen = () => {
         setIsLoading(true);
 
         try {
-            // Llamamos al servicio (que apunta a nuestro Backend)
+            // Autenticación en backend.
             const response = await login(email, password);
 
-            // Extraemos los datos del formato correcto de la API
+            // Extracción de payload.
             const token = response.data.access_token;
             const userData = response.data.user_info;
 
-            // Si funciona, guardamos el token y la info en el Context (cerebro)
+            // Actualización de estado global.
             loginUser(token, userData);
 
-            // Redirigimos al muro
+            // Redirección al feed.
             navigate('/home');
         } catch (err) {
             setError(err.message || 'Error al iniciar sesión');
@@ -42,17 +42,17 @@ export const LoginScreen = () => {
 
     return (
         <div className="login-container">
-            {/* Fondo de video a pantalla completa */}
+            {/* Video de fondo. */}
             <video src={loginVideo} poster={loginWave} className="login-video-bg" autoPlay loop muted playsInline />
 
 
 
-            {/* EL LOGO VIENE AQUI!!!!! */}
+            {/* Logo placeholder. */}
 
 
-            {/* Caja modal central (Glassmorphism flotante) */}
+            {/* Contenedor modal principal. */}
             <div className="login-modal">
-                {/* Lado Derecho: Formulario */}
+                {/* Formulario derecho. */}
                 <div className="login-form-side">
                     <div className="login-header">
                         <h1>Welcome back to MIB</h1>
