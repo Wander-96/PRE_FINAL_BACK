@@ -355,6 +355,7 @@ export const ProfileScreen = () => {
                                     type="file" 
                                     accept="image/*" 
                                     style={{ display: 'none' }} 
+                                    ref={avatarInputRef}
                                     onChange={(e) => handleImageChange(e, 'avatar')} 
                                     disabled={isUploading}
                                 />
